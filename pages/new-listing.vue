@@ -21,7 +21,19 @@
           <input type="file" multiple accept="image/*" @change="onPick" />
         </div>
         <div class="grid grid-cols-3" style="gap:8px">
-          <img v-for="(u,i) in imageUrls" :key="i" :src="u" style="width:100%; aspect-ratio:4/3; object-fit:cover" />
+          <div
+            v-for="(u,i) in imageUrls"
+            :key="u"
+            class="card"
+            style="overflow:hidden; position:relative"
+            draggable="true"
+            @dragstart="onDragStart(i)"
+            @dragover.prevent
+            @drop="onDrop(i)"
+          >
+            <img :src="u" style="width:100%; aspect-ratio:4/3; object-fit:cover" />
+            <button type="button" class="btn" style="position:absolute; top:6px; right:6px" @click="removeAt(i)">Remove</button>
+          </div>
         </div>
       </div>
 
@@ -49,6 +61,7 @@ const pending = ref(false)
 const lat = ref<number | undefined>()
 const lng = ref<number | undefined>()
 const imageUrls = ref<string[]>([])
+const dragFrom = ref<number | null>(null)
 
 async function onPick(e: Event) {
   const input = e.target as HTMLInputElement
@@ -77,6 +90,23 @@ function useCurrentLocation() {
     lat.value = pos.coords.latitude
     lng.value = pos.coords.longitude
   })
+}
+
+function onDragStart(i: number){
+  dragFrom.value = i
+}
+function onDrop(i: number){
+  if (dragFrom.value === null) return
+  const arr = [...imageUrls.value]
+  const [moved] = arr.splice(dragFrom.value, 1)
+  arr.splice(i, 0, moved)
+  imageUrls.value = arr
+  dragFrom.value = null
+}
+function removeAt(i: number){
+  const arr = [...imageUrls.value]
+  arr.splice(i,1)
+  imageUrls.value = arr
 }
 
 async function submit() {

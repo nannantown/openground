@@ -21,6 +21,12 @@
           <button class="btn btn-primary" @click="contact()">Contact seller</button>
         </div>
         <div class="subheading">Posted {{ fromNow(listing.created_at) }}</div>
+        <div class="row" style="gap:8px">
+          <button class="btn" type="button" @click="toggleFav()">
+            <span v-if="isFaved">★ Saved</span>
+            <span v-else>☆ Save</span>
+          </button>
+        </div>
       </aside>
     </div>
   </main>
@@ -32,12 +38,14 @@ import { useRoute, useAsyncData, useHead } from '#app'
 import type { Listing } from '~~/shared/types'
 import { useListings } from '~~/composables/useListings'
 import { useAuth } from '~~/composables/useAuth'
+import { useFavourites } from '~~/composables/useFavourites'
 import { useChat } from '~~/composables/useChat'
 
 const route = useRoute()
 const { getListing } = useListings()
 const { createThread } = useChat()
 const { user } = useAuth()
+const { listFavouriteIds, toggleFavourite } = useFavourites()
 
 const { data } = await useAsyncData(
   `listing:${route.params.id}`,
@@ -68,6 +76,18 @@ async function contact(){
   const partnerId = (listing.value as any).owner_id as string
   const { thread_id } = await createThread(String(listing.value.id), partnerId)
   await navigateTo(`/chat/${thread_id}`)
+}
+
+const favSet = ref<Set<string>>(new Set())
+const isFaved = computed(() => favSet.value.has(String(listing.value?.id)))
+if (user.value) {
+  const ids = await listFavouriteIds()
+  favSet.value = new Set(ids)
+}
+async function toggleFav(){
+  if (!listing.value) return
+  if (!user.value) return navigateTo('/login')
+  favSet.value = await toggleFavourite(String(listing.value.id), favSet.value)
 }
 
 useHead(() => {
