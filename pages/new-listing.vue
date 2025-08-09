@@ -1,38 +1,63 @@
 <template>
   <main class="container">
     <h1 class="heading">New Listing</h1>
-    <form @submit.prevent="submit" class="card" style="padding:16px; display:grid; gap:12px">
+    <form @submit.prevent="submit" class="card" style="padding: 16px; display: grid; gap: 12px">
       <input v-model="title" class="input" placeholder="Title" required />
       <textarea v-model="description" class="input" placeholder="Description" rows="5" />
-      <div class="row" style="gap:8px">
-        <input v-model.number="price" class="input" type="number" placeholder="Price" style="max-width:200px" />
-        <input v-model="category" class="input" placeholder="Category" style="max-width:240px" />
+      <div class="row" style="gap: 8px">
+        <input
+          v-model.number="price"
+          class="input"
+          type="number"
+          placeholder="Price"
+          style="max-width: 200px"
+        />
+        <input v-model="category" class="input" placeholder="Category" style="max-width: 240px" />
       </div>
 
-      <div class="row" style="gap:8px">
-        <input v-model.number="lat" class="input" type="number" step="0.000001" placeholder="Latitude" />
-        <input v-model.number="lng" class="input" type="number" step="0.000001" placeholder="Longitude" />
+      <div class="row" style="gap: 8px">
+        <input
+          v-model.number="lat"
+          class="input"
+          type="number"
+          step="0.000001"
+          placeholder="Latitude"
+        />
+        <input
+          v-model.number="lng"
+          class="input"
+          type="number"
+          step="0.000001"
+          placeholder="Longitude"
+        />
         <button class="btn" type="button" @click="useCurrentLocation">Use current</button>
       </div>
 
-      <div class="card" style="padding:12px; display:grid; gap:8px">
+      <div class="card" style="padding: 12px; display: grid; gap: 8px">
         <div class="row-between">
           <strong>Images</strong>
           <input type="file" multiple accept="image/*" @change="onPick" />
         </div>
-        <div class="grid grid-cols-3" style="gap:8px">
+        <div class="grid grid-cols-3" style="gap: 8px">
           <div
-            v-for="(u,i) in imageUrls"
+            v-for="(u, i) in imageUrls"
             :key="u"
             class="card"
-            style="overflow:hidden; position:relative"
+            style="overflow: hidden; position: relative"
             draggable="true"
             @dragstart="onDragStart(i)"
             @dragover.prevent
             @drop="onDrop(i)"
           >
-            <img :src="u" style="width:100%; aspect-ratio:4/3; object-fit:cover" />
-            <button type="button" class="btn" style="position:absolute; top:6px; right:6px" @click="removeAt(i)">Remove</button>
+            <img :src="u" style="width: 100%; aspect-ratio: 4/3; object-fit: cover" />
+            <button
+              type="button"
+              class="btn"
+              style="position: absolute; top: 6px; right: 6px"
+              @click="removeAt(i)"
+            >
+              Remove
+            </button>
           </div>
         </div>
       </div>
@@ -44,7 +69,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { navigateTo, useSupabaseClient } from '#app'
+import { navigateTo } from '#app'
+import { useSupabaseClient } from '#imports'
 import { useListings } from '~~/composables/useListings'
 import { useAuth } from '~~/composables/useAuth'
 import { randomUUID } from 'uncrypto'
@@ -71,7 +97,9 @@ async function onPick(e: Event) {
     const ext = file.name.split('.').pop() || 'jpg'
     const path = `listings/staged/${randomUUID()}.${ext}`
     const { error } = await supabase.storage.from('listing-images').upload(path, file, {
-      cacheControl: '3600', upsert: true, contentType: file.type,
+      cacheControl: '3600',
+      upsert: true,
+      contentType: file.type,
     })
     if (error) {
       // eslint-disable-next-line no-alert
@@ -92,20 +120,20 @@ function useCurrentLocation() {
   })
 }
 
-function onDragStart(i: number){
+function onDragStart(i: number) {
   dragFrom.value = i
 }
-function onDrop(i: number){
+function onDrop(i: number) {
   if (dragFrom.value === null) return
   const arr = [...imageUrls.value]
   const [moved] = arr.splice(dragFrom.value, 1)
-  arr.splice(i, 0, moved)
+  arr.splice(i, 0, moved as string)
   imageUrls.value = arr
   dragFrom.value = null
 }
-function removeAt(i: number){
+function removeAt(i: number) {
   const arr = [...imageUrls.value]
-  arr.splice(i,1)
+  arr.splice(i, 1)
   imageUrls.value = arr
 }
 
