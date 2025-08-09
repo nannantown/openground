@@ -13,8 +13,8 @@
     </form>
 
     <ul class="grid">
-      <li v-for="l in listings" :key="l.id">
-        <NuxtLink :to="`/listing/${l.id}`">
+      <li v-for="l in listings" :key="l.id" class="card" style="padding:8px">
+        <NuxtLink :to="`/listing/${l.id}`" style="display:block">
           <NuxtImg
             v-if="firstImage(l)"
             :src="firstImage(l)"
