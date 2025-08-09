@@ -2,7 +2,6 @@ import { defineNuxtConfig } from 'nuxt/config'
 
 export default defineNuxtConfig({
   modules: ['@nuxtjs/supabase', '@pinia/nuxt', '@vueuse/nuxt', '@nuxt/image'],
-  css: ['~/assets/css/main.css'],
   typescript: {
     strict: true,
     typeCheck: true,
