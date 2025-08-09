@@ -10,12 +10,13 @@
     "resolveJsonModule": true,
     "useDefineForClassFields": true,
     "skipLibCheck": true,
+    "baseUrl": ".",
     "paths": {
       "~~/*": ["./*"],
       "~/*": ["./*"],
-      "#app": ["node_modules/nuxt/dist/app/index.d.ts"],
-      "#imports": ["node_modules/nuxt/dist/app/index.d.ts"],
-      "#build/*": [".nuxt/*"]
+      "#app": ["./node_modules/nuxt/dist/app/index.d.ts"],
+      "#imports": ["./node_modules/nuxt/dist/app/index.d.ts"],
+      "#build/*": ["./.nuxt/*"]
     },
 
     "jsx": "preserve",
