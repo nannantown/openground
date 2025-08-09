@@ -33,6 +33,7 @@ async function emailSignIn() {
     const { error } = await supabase.auth.signInWithOtp({ email: email.value, options: { emailRedirectTo: location.origin } })
     if (error) throw error
     alert('Check your inbox for the magic link')
+    await $fetch('/api/me/ensure-user', { method: 'POST' })
     router.push('/')
   } catch (e: any) {
     alert(e.message || 'Failed')
@@ -43,6 +44,7 @@ async function emailSignIn() {
 
 async function oauth(provider: 'google' | 'github') {
   await supabase.auth.signInWithOAuth({ provider, options: { redirectTo: location.origin } })
+  await $fetch('/api/me/ensure-user', { method: 'POST' })
 }
 </script>
 
