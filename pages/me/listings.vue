@@ -14,6 +14,7 @@
           <button class="btn" type="button" @click="setStatus(l.id, 'active')">Active</button>
           <button class="btn" type="button" @click="setStatus(l.id, 'sold')">Sold</button>
           <button class="btn" type="button" @click="setStatus(l.id, 'hidden')">Hidden</button>
+          <button class="btn" type="button" @click="edit(l)">Edit</button>
           <NuxtLink class="btn" :href="`/listing/${l.id}`">Open</NuxtLink>
         </div>
       </li>
@@ -38,6 +39,15 @@ const mine = computed<Listing[]>(() => data.value || [])
 async function setStatus(id: string, status: 'active'|'sold'|'hidden'){
   if (!user.value) return navigateTo('/login')
   await $fetch(`/api/listings/${id}/status`, { method: 'POST', body: { status } })
+  await refresh()
+}
+
+async function edit(l: any){
+  const title = prompt('Title', l.title)
+  if (title==null) return
+  const priceStr = prompt('Price', l.price)
+  const price = priceStr ? Number(priceStr) : undefined
+  await $fetch(`/api/listings/${l.id}`, { method:'PUT', body:{ title, price } })
   await refresh()
 }
 </script>
