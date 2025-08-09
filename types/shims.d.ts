@@ -22,3 +22,5 @@ export {}
 // Nuxt module resolution shims for tests/typecheck in CI
 declare module '#app'
 declare module '#imports'
+declare module '~~/*'
+declare module '~/*'
