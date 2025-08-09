@@ -1,18 +1,28 @@
 <template>
   <main class="container" v-if="listing">
-    <div class="gallery">
-      <NuxtImg
-        v-for="(img, i) in listing.images as string[]"
-        :key="i"
-        :src="img"
-        :alt="listing.title"
-        width="640"
-        height="480"
-      />
+    <div class="grid" style="grid-template-columns: 2fr 1fr; gap: 20px">
+      <section class="card shadow" style="overflow: hidden">
+        <img
+          v-for="(img, i) in (listing.images as string[] || [])"
+          :key="i"
+          :src="img"
+          :alt="listing.title"
+          style="width:100%; display:block; aspect-ratio: 4/3; object-fit: cover"
+        />
+        <div style="padding:16px">
+          <h1 class="heading">{{ listing.title }}</h1>
+          <div class="subheading" style="margin-top:6px">{{ listing.category || 'Others' }}</div>
+          <p style="margin-top:12px">{{ listing.description }}</p>
+        </div>
+      </section>
+      <aside class="card" style="padding:16px; display:grid; gap:12px">
+        <div class="row-between">
+          <div class="heading">¥{{ toPrice(listing.price) }}</div>
+          <button class="btn btn-primary" @click="contact()">Contact seller</button>
+        </div>
+        <div class="subheading">Posted {{ fromNow(listing.created_at) }}</div>
+      </aside>
     </div>
-    <h1>{{ listing.title }}</h1>
-    <p class="price">{{ formatPrice(listing.price) }}</p>
-    <p>{{ listing.description }}</p>
   </main>
 </template>
 
@@ -21,9 +31,11 @@ import { computed } from 'vue'
 import { useRoute, useAsyncData, useHead } from '#app'
 import type { Listing } from '~~/shared/types'
 import { useListings } from '~~/composables/useListings'
+import { useChat } from '~~/composables/useChat'
 
 const route = useRoute()
 const { getListing } = useListings()
+const { createThread } = useChat()
 
 const { data } = await useAsyncData(
   `listing:${route.params.id}`,
@@ -32,9 +44,25 @@ const { data } = await useAsyncData(
 )
 const listing = computed<Listing | null>(() => data.value || null)
 
-function formatPrice(p?: number | null) {
-  if (p == null) return ''
-  return new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' }).format(Number(p))
+function toPrice(v?: number | string | null){
+  if (v===null || v===undefined) return '-'
+  const n = typeof v==='string'? Number(v): v
+  return n.toLocaleString('ja-JP')
+}
+
+function fromNow(iso?: string | null){
+  if(!iso) return ''
+  const d = new Date(iso)
+  const diff = (Date.now()-d.getTime())/1000
+  if (diff<60) return 'just now'
+  if (diff<3600) return `${Math.floor(diff/60)}m ago`
+  if (diff<86400) return `${Math.floor(diff/3600)}h ago`
+  return `${Math.floor(diff/86400)}d ago`
+}
+
+async function contact(){
+  // For MVP, route to chat page once thread is created (requires seller id; omitted here)
+  alert('Chat coming soon')
 }
 
 useHead(() => {
