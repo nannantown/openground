@@ -1,0 +1,174 @@
+openapi: 3.1.0
+info:
+  title: Open Ground API
+  version: 0.1.0
+servers:
+  - url: /v1
+paths:
+  /listings:
+    get:
+      summary: Search listings
+      parameters:
+        - in: query
+          name: q
+          schema: { type: string }
+        - in: query
+          name: cat
+          schema: { type: string }
+        - in: query
+          name: min_price
+          schema: { type: number }
+        - in: query
+          name: max_price
+          schema: { type: number }
+        - in: query
+          name: center_lat
+          schema: { type: number }
+        - in: query
+          name: center_lng
+          schema: { type: number }
+        - in: query
+          name: radius_km
+          schema: { type: number }
+      responses:
+        '200':
+          description: List of listings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Listing'
+    post:
+      summary: Create listing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateListingInput'
+      responses:
+        '200':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Listing'
+  /listings/{id}:
+    get:
+      summary: Get listing by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Listing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Listing'
+  /threads:
+    post:
+      summary: Create thread
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                listing_id: { type: string, format: uuid }
+                partner_id: { type: string, format: uuid }
+              required: [listing_id, partner_id]
+      responses:
+        '200':
+          description: Thread id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  thread_id: { type: string, format: uuid }
+                required: [thread_id]
+  /threads/{id}/messages:
+    get:
+      summary: List messages
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+        - in: query
+          name: after
+          schema: { type: string }
+      responses:
+        '200':
+          description: Messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+    post:
+      summary: Send message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body: { type: string, nullable: true }
+                image_urls: { type: array, items: { type: string, format: uri } }
+      responses:
+        '200':
+          description: Created message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+components:
+  schemas:
+    Listing:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        owner_id: { type: string, format: uuid }
+        title: { type: string }
+        description: { type: string, nullable: true }
+        price: { type: number, nullable: true }
+        category: { type: string, nullable: true }
+        lat: { type: number, nullable: true }
+        lng: { type: number, nullable: true }
+        images: { type: array, items: { type: string, format: uri } }
+        status: { type: string, enum: [active, sold, expired] }
+        promoted_type: { type: string, enum: [none, spotlight, top] }
+        created_at: { type: string, format: date-time }
+        expires_at: { type: string, format: date-time }
+      required: [id, owner_id, title, images, status, promoted_type, created_at, expires_at]
+    Message:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        thread_id: { type: string, format: uuid }
+        sender_id: { type: string, format: uuid }
+        body: { type: string, nullable: true }
+        image_urls: { type: array, items: { type: string, format: uri } }
+        created_at: { type: string, format: date-time }
+        read_by: { type: array, items: { type: string, format: uuid } }
+      required: [id, thread_id, sender_id, image_urls, created_at, read_by]
+    CreateListingInput:
+      type: object
+      properties:
+        title: { type: string }
+        description: { type: string, nullable: true }
+        price: { type: number, nullable: true }
+        category: { type: string, nullable: true }
+        lat: { type: number, nullable: true }
+        lng: { type: number, nullable: true }
+        images: { type: array, items: { type: string, format: uri } }
+      required: [title, images]
+

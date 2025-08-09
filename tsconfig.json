@@ -1,0 +1,22 @@
+{
+  "extends": "./.nuxt/tsconfig.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "useDefineForClassFields": true,
+
+    "jsx": "preserve",
+    "verbatimModuleSyntax": true
+  },
+  "vueCompilerOptions": {
+    "target": 3.5,
+    "strictTemplates": true
+  },
+  "include": ["**/*.ts", "**/*.tsx", "**/*.vue"],
+  "exclude": ["node_modules", ".nuxt", ".output", "supabase/functions/**"]
+}
