@@ -2,11 +2,15 @@
   <main class="container" v-if="listing">
     <div class="grid" style="grid-template-columns: 2fr 1fr; gap: 20px">
       <section class="card shadow" style="overflow: hidden">
-        <img
+        <NuxtImg
           v-for="(img, i) in (listing.images as string[] || [])"
           :key="i"
           :src="img"
           :alt="listing.title"
+          format="webp"
+          width="1200"
+          height="900"
+          sizes="(max-width: 1024px) 100vw, 66vw"
           style="width:100%; display:block; aspect-ratio: 4/3; object-fit: cover"
         />
         <div style="padding:16px">
@@ -30,6 +34,14 @@
           <button v-if="user?.id===listing.owner_id" class="btn" type="button" @click="markSold(false)">Mark active</button>
         </div>
       </aside>
+    </div>
+    <div v-if="listing.lat && listing.lng" class="card" style="margin-top:16px; overflow:hidden">
+      <iframe
+        :src="osmEmbed(listing.lat, listing.lng)"
+        style="width:100%; height:360px; border:0"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+      />
     </div>
   </main>
 </template>
@@ -78,6 +90,16 @@ async function contact(){
   const partnerId = (listing.value as any).owner_id as string
   const { thread_id } = await createThread(String(listing.value.id), partnerId)
   await navigateTo(`/chat/${thread_id}`)
+}
+
+function osmEmbed(lat?: number|null, lng?: number|null){
+  if (!lat || !lng) return ''
+  const url = new URL('https://www.openstreetmap.org/export/embed.html')
+  const d = 0.01
+  url.searchParams.set('bbox', `${lng-d},${lat-d},${lng+d},${lat+d}`)
+  url.searchParams.set('marker', `${lat},${lng}`)
+  url.searchParams.set('layer', 'mapnik')
+  return url.toString()
 }
 
 const favSet = ref<Set<string>>(new Set())
