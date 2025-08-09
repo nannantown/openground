@@ -21,6 +21,7 @@
         <NuxtLink class="btn" href="/">Browse</NuxtLink>
         <NuxtLink class="btn" href="/favourites">Favourites</NuxtLink>
         <NuxtLink class="btn" href="/new-listing">Post</NuxtLink>
+        <NuxtLink class="btn" href="/me/listings">My</NuxtLink>
       </nav>
     </header>
     <main class="container" style="padding: 8px 0 40px">
