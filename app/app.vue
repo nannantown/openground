@@ -19,6 +19,7 @@
       </NuxtLink>
       <nav class="row" style="gap: 8px">
         <NuxtLink class="btn" href="/">Browse</NuxtLink>
+        <NuxtLink class="btn" href="/favourites">Favourites</NuxtLink>
         <NuxtLink class="btn" href="/new-listing">Post</NuxtLink>
       </nav>
     </header>

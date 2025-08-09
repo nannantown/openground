@@ -24,6 +24,10 @@
           />
           <h2>{{ l.title }}</h2>
           <p>{{ formatPrice(l.price) }}</p>
+          <button class="btn" type="button" @click.prevent="onToggleFav(l.id)">
+            <span v-if="favSet.has(l.id)">★ Saved</span>
+            <span v-else>☆ Save</span>
+          </button>
         </NuxtLink>
       </li>
     </ul>
@@ -33,6 +37,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useHead, useRoute, useAsyncData, useRequestURL, navigateTo } from '#app'
+import { useAuth } from '~~/composables/useAuth'
+import { useFavourites } from '~~/composables/useFavourites'
 import type { Listing } from '~~/shared/types'
 import { useListings } from '~~/composables/useListings'
 
@@ -57,6 +63,19 @@ const { data } = await useAsyncData(
 )
 
 const listings = computed<Listing[]>(() => data.value || [])
+const { user } = useAuth()
+const { listFavouriteIds, toggleFavourite } = useFavourites()
+const favSet = ref<Set<string>>(new Set())
+
+if (user.value) {
+  const ids = await listFavouriteIds()
+  favSet.value = new Set(ids)
+}
+
+async function onToggleFav(id: string) {
+  if (!user.value) return navigateTo('/login')
+  favSet.value = await toggleFavourite(id, favSet.value)
+}
 
 function onSearch() {
   navigateTo({
