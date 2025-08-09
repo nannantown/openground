@@ -53,9 +53,18 @@ function scrollToBottom(){
   })
 }
 
-onMounted(scrollToBottom)
-watch(messages, scrollToBottom)
-setInterval(refresh, 4000)
+onMounted(async () => {
+  scrollToBottom()
+  await $fetch(`/v1/threads/${String(route.params.thread)}/read`, { method: 'POST' })
+})
+watch(messages, async () => {
+  scrollToBottom()
+  await $fetch(`/v1/threads/${String(route.params.thread)}/read`, { method: 'POST' })
+})
+setInterval(async () => {
+  await refresh()
+  await $fetch(`/v1/threads/${String(route.params.thread)}/read`, { method: 'POST' })
+}, 4000)
 </script>
 
 <style scoped>
