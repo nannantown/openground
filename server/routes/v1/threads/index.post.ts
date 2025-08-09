@@ -18,6 +18,20 @@ export default defineEventHandler(async (event) => {
   }
   const supabase = getSupabaseServerClient(event)
 
+  // Reuse existing thread if already present for these two users
+  const { data: existing, error: eerr } = await supabase
+    .from('participants')
+    .select('thread_id')
+    .in('user_id', [user.id, parsed.data.partner_id])
+  if (!eerr && existing) {
+    const counts: Record<string, number> = {}
+    for (const r of existing as any[]) counts[r.thread_id] = (counts[r.thread_id] || 0) + 1
+    const found = Object.entries(counts).find(([, c]) => c >= 2)
+    if (found) {
+      return { thread_id: found[0] }
+    }
+  }
+
   const { data: thread, error: terr } = await supabase
     .from('threads')
     .insert({})
