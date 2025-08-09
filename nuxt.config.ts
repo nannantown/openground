@@ -2,6 +2,15 @@ import { defineNuxtConfig } from 'nuxt/config'
 
 export default defineNuxtConfig({
   modules: ['@nuxtjs/supabase', '@pinia/nuxt', '@vueuse/nuxt', '@nuxt/image'],
+  supabase: {
+    // Disable global auth redirects; pages manage auth gating explicitly
+    redirect: false,
+    redirectOptions: {
+      login: '/login',
+      callback: '/auth',
+      exclude: ['/', '/listing/**', '/favourites', '/login', '/auth', '/sitemap.xml', '/robots.txt'],
+    },
+  },
   typescript: {
     strict: true,
     typeCheck: true,
