@@ -9,6 +9,8 @@
       </select>
       <input v-model.number="min" type="number" placeholder="Min" />
       <input v-model.number="max" type="number" placeholder="Max" />
+      <input v-model.number="radiusKm" type="number" placeholder="Radius km" min="1" style="max-width: 120px" />
+      <button type="button" @click="useCurrentLocation">Use my location</button>
       <button>Search</button>
     </form>
 
@@ -49,6 +51,9 @@ const q = ref<string>((route.query.q as string) || '')
 const cat = ref<string>((route.query.cat as string) || '')
 const min = ref<number | undefined>(route.query.min ? Number(route.query.min) : undefined)
 const max = ref<number | undefined>(route.query.max ? Number(route.query.max) : undefined)
+const centerLat = ref<number | undefined>(route.query.lat ? Number(route.query.lat) : undefined)
+const centerLng = ref<number | undefined>(route.query.lng ? Number(route.query.lng) : undefined)
+const radiusKm = ref<number | undefined>(route.query.r ? Number(route.query.r) : undefined)
 
 const { data } = await useAsyncData(
   'feed',
@@ -58,6 +63,9 @@ const { data } = await useAsyncData(
       cat: cat.value || undefined,
       min_price: min.value,
       max_price: max.value,
+      center_lat: centerLat.value,
+      center_lng: centerLng.value,
+      radius_km: radiusKm.value,
     }),
   { server: true },
 )
@@ -79,7 +87,15 @@ async function onToggleFav(id: string) {
 
 function onSearch() {
   navigateTo({
-    query: { q: q.value || undefined, cat: cat.value || undefined, min: min.value, max: max.value },
+    query: {
+      q: q.value || undefined,
+      cat: cat.value || undefined,
+      min: min.value,
+      max: max.value,
+      lat: centerLat.value,
+      lng: centerLng.value,
+      r: radiusKm.value,
+    },
   })
 }
 
@@ -120,6 +136,14 @@ useHead(() => ({
 }))
 
 const categories = ['Electronics', 'Home', 'Vehicles', 'Jobs']
+
+function useCurrentLocation() {
+  if (!navigator.geolocation) return
+  navigator.geolocation.getCurrentPosition((pos) => {
+    centerLat.value = pos.coords.latitude
+    centerLng.value = pos.coords.longitude
+  })
+}
 </script>
 
 <style scoped>
