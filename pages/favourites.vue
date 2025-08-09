@@ -2,11 +2,11 @@
   <main class="container" style="display:grid; gap:14px">
     <h1 class="heading">Favourites</h1>
     <div v-if="!user" class="card" style="padding:12px">
-      <NuxtLink class="btn" href="/login">Sign in to view your favourites</NuxtLink>
+      <NuxtLink class="btn" to="/login">Sign in to view your favourites</NuxtLink>
     </div>
     <ul v-else class="grid" style="list-style:none; padding:0">
       <li v-for="l in favListings" :key="l.id" class="card" style="padding:8px">
-        <NuxtLink :href="`/listing/${l.id}`" style="display:block">
+        <NuxtLink :to="`/listing/${l.id}`" style="display:block">
           <img :src="(l.images?.[0]||placeholder)" style="width:100%; aspect-ratio:4/3; object-fit:cover" />
           <div style="padding:8px">
             <div class="row-between"><strong>{{ l.title }}</strong><span>¥{{ toPrice(l.price) }}</span></div>

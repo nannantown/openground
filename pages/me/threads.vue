@@ -2,7 +2,7 @@
   <main class="container" style="display: grid; gap: 14px">
     <h1 class="heading">My Chats</h1>
     <div v-if="!user" class="card" style="padding: 12px">
-      <NuxtLink class="btn" href="/login">Sign in</NuxtLink>
+      <NuxtLink class="btn" to="/login">Sign in</NuxtLink>
     </div>
     <ul v-else style="list-style: none; padding: 0; display: grid; gap: 8px">
       <li
@@ -16,7 +16,7 @@
           <span class="muted">{{ fromNow(t.updated_at) }}</span>
         </div>
         <div class="muted">{{ t.last_message }}</div>
-        <NuxtLink class="btn" :href="`/chat/${t.id}`">Open</NuxtLink>
+        <NuxtLink class="btn" :to="`/chat/${t.id}`">Open</NuxtLink>
       </li>
     </ul>
   </main>

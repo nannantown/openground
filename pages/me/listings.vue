@@ -2,7 +2,7 @@
   <main class="container" style="display:grid; gap:14px">
     <h1 class="heading">My Listings</h1>
     <div v-if="!user" class="card" style="padding:12px">
-      <NuxtLink class="btn" href="/login">Sign in</NuxtLink>
+      <NuxtLink class="btn" to="/login">Sign in</NuxtLink>
     </div>
     <ul v-else class="grid" style="list-style:none; padding:0">
       <li v-for="l in mine" :key="l.id" class="card" style="padding:12px; display:grid; gap:8px">
@@ -16,7 +16,7 @@
           <button class="btn" type="button" @click="setStatus(l.id, 'hidden')">Hidden</button>
           <button class="btn" type="button" @click="edit(l)">Edit</button>
           <button class="btn" type="button" @click="remove(l.id)">Delete</button>
-          <NuxtLink class="btn" :href="`/listing/${l.id}`">Open</NuxtLink>
+          <NuxtLink class="btn" :to="`/listing/${l.id}`">Open</NuxtLink>
         </div>
       </li>
     </ul>
