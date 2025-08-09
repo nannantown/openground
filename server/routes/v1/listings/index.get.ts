@@ -28,8 +28,8 @@ export default defineEventHandler(async (event) => {
     return data
   }
 
-  // Fallback query if RPC not yet visible in PostgREST cache
-  const needsFallback = /function .*rpc_search_listings.* schema cache/i.test(error.message)
+  // Fallback query if PostgREST schema cache is stale (function or table not visible yet)
+  const needsFallback = /schema cache/i.test(error.message)
   if (needsFallback) {
     let qb = supabase.from('listings').select('*').eq('status', 'active')
     if (params.q) {
