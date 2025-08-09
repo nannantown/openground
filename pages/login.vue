@@ -22,11 +22,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from '#app'
-// Use Nuxt Supabase module composable
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const supabase = (globalThis as any).useSupabaseClient
-  ? (globalThis as any).useSupabaseClient()
-  : require('#imports').useSupabaseClient()
+import { useSupabaseClient } from '#imports'
+const supabase = useSupabaseClient()
 
 const router = useRouter()
 const email = ref('')
