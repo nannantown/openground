@@ -1,36 +1,7 @@
 <template>
   <NuxtLayout>
-    <header
-      class="card row-between"
-      style="
-        padding: 12px 16px;
-        margin: 12px;
-        position: sticky;
-        top: 8px;
-        z-index: 10;
-        backdrop-filter: blur(10px);
-      "
-    >
-      <NuxtLink to="/" class="row" style="gap: 10px">
-        <div class="pill" style="background: var(--og-accent); color: #0b0b0c; font-weight: 800">
-          OG
-        </div>
-        <strong>Open Ground</strong>
-      </NuxtLink>
-      <nav class="row" style="gap: 8px">
-        <NuxtLink class="btn" to="/">Browse</NuxtLink>
-        <NuxtLink class="btn" to="/favourites">Favourites</NuxtLink>
-        <NuxtLink class="btn" to="/new-listing">Post</NuxtLink>
-        <NuxtLink class="btn" to="/me/listings">My</NuxtLink>
-      </nav>
-    </header>
-    <main class="container" style="padding: 8px 0 40px">
-      <NuxtPage />
-    </main>
+    <NuxtPage />
   </NuxtLayout>
-  <ClientOnly>
-    <div id="toasts" />
-  </ClientOnly>
 </template>
 
 <script setup lang="ts">
