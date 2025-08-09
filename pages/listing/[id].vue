@@ -25,6 +25,18 @@
           <button class="btn btn-primary" @click="contact()">Contact seller</button>
         </div>
         <div class="subheading">Posted {{ fromNow(listing.created_at) }}</div>
+        <div v-if="seller" class="card" style="padding:12px; display:grid; gap:6px">
+          <div class="row-between">
+            <div class="row" style="gap:8px">
+              <img v-if="seller.avatar_url" :src="seller.avatar_url" style="width:36px;height:36px;border-radius:50%" />
+              <NuxtLink :href="`/profile/${seller.id}`"><strong>{{ seller.display_name }}</strong></NuxtLink>
+            </div>
+            <div class="muted" style="font-size:12px">
+              ⭐️ {{ Math.round((seller.rating_average||0)*10)/10 }} ({{ seller.review_count }})
+            </div>
+          </div>
+          <div class="muted" style="font-size:12px">Member since {{ new Date(seller.member_since||'').toLocaleDateString() }}</div>
+        </div>
         <div class="row" style="gap:8px">
           <button class="btn" type="button" @click="toggleFav()">
             <span v-if="isFaved">★ Saved</span>
@@ -119,6 +131,11 @@ async function markSold(sold: boolean){
   if (!user.value) return navigateTo('/login')
   await $fetch(`/api/listings/${listing.value.id}/status`, { method: 'POST', body: { status: sold ? 'sold' : 'active' } })
   location.reload()
+}
+
+const seller = ref<any>(null)
+if (route.params.id) {
+  seller.value = await $fetch(`/api/listings/${String(route.params.id)}/seller`)
 }
 
 useHead(() => {
