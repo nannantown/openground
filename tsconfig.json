@@ -9,6 +9,14 @@
     "isolatedModules": true,
     "resolveJsonModule": true,
     "useDefineForClassFields": true,
+    "skipLibCheck": true,
+    "paths": {
+      "~~/*": ["./*"],
+      "~/*": ["./*"],
+      "#app": ["node_modules/nuxt/dist/app/index.d.ts"],
+      "#imports": ["node_modules/nuxt/dist/app/index.d.ts"],
+      "#build/*": [".nuxt/*"]
+    },
 
     "jsx": "preserve",
     "verbatimModuleSyntax": true
