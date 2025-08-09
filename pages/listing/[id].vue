@@ -31,11 +31,13 @@ import { computed } from 'vue'
 import { useRoute, useAsyncData, useHead } from '#app'
 import type { Listing } from '~~/shared/types'
 import { useListings } from '~~/composables/useListings'
+import { useAuth } from '~~/composables/useAuth'
 import { useChat } from '~~/composables/useChat'
 
 const route = useRoute()
 const { getListing } = useListings()
 const { createThread } = useChat()
+const { user } = useAuth()
 
 const { data } = await useAsyncData(
   `listing:${route.params.id}`,
@@ -61,8 +63,11 @@ function fromNow(iso?: string | null){
 }
 
 async function contact(){
-  // For MVP, route to chat page once thread is created (requires seller id; omitted here)
-  alert('Chat coming soon')
+  if (!listing.value) return
+  if (!user.value) return navigateTo('/login')
+  const partnerId = (listing.value as any).owner_id as string
+  const { thread_id } = await createThread(String(listing.value.id), partnerId)
+  await navigateTo(`/chat/${thread_id}`)
 }
 
 useHead(() => {
