@@ -1,0 +1,11 @@
+import { defineEventHandler, setHeader } from 'h3'
+
+export default defineEventHandler(() => {
+  setHeader(event, 'content-type', 'text/plain; charset=utf-8')
+  return `User-agent: *
+Allow: /
+Sitemap: /sitemap.xml
+`
+})
+
+

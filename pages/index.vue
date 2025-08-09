@@ -9,12 +9,14 @@
       </select>
       <input v-model.number="min" type="number" placeholder="Min" />
       <input v-model.number="max" type="number" placeholder="Max" />
+      <input v-model.number="radiusKm" type="number" placeholder="Radius km" min="1" style="max-width: 120px" />
+      <button type="button" @click="useCurrentLocation">Use my location</button>
       <button>Search</button>
     </form>
 
     <ul class="grid">
-      <li v-for="l in listings" :key="l.id">
-        <NuxtLink :to="`/listing/${l.id}`">
+      <li v-for="l in listings" :key="l.id" class="card" style="padding:8px">
+        <NuxtLink :to="`/listing/${l.id}`" style="display:block">
           <NuxtImg
             v-if="firstImage(l)"
             :src="firstImage(l)"
@@ -24,6 +26,10 @@
           />
           <h2>{{ l.title }}</h2>
           <p>{{ formatPrice(l.price) }}</p>
+          <button class="btn" type="button" @click.prevent="onToggleFav(l.id)">
+            <span v-if="favSet.has(l.id)">★ Saved</span>
+            <span v-else>☆ Save</span>
+          </button>
         </NuxtLink>
       </li>
     </ul>
@@ -33,6 +39,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useHead, useRoute, useAsyncData, useRequestURL, navigateTo } from '#app'
+import { useAuth } from '~~/composables/useAuth'
+import { useFavourites } from '~~/composables/useFavourites'
 import type { Listing } from '~~/shared/types'
 import { useListings } from '~~/composables/useListings'
 
@@ -43,6 +51,9 @@ const q = ref<string>((route.query.q as string) || '')
 const cat = ref<string>((route.query.cat as string) || '')
 const min = ref<number | undefined>(route.query.min ? Number(route.query.min) : undefined)
 const max = ref<number | undefined>(route.query.max ? Number(route.query.max) : undefined)
+const centerLat = ref<number | undefined>(route.query.lat ? Number(route.query.lat) : undefined)
+const centerLng = ref<number | undefined>(route.query.lng ? Number(route.query.lng) : undefined)
+const radiusKm = ref<number | undefined>(route.query.r ? Number(route.query.r) : undefined)
 
 const { data } = await useAsyncData(
   'feed',
@@ -52,15 +63,39 @@ const { data } = await useAsyncData(
       cat: cat.value || undefined,
       min_price: min.value,
       max_price: max.value,
+      center_lat: centerLat.value,
+      center_lng: centerLng.value,
+      radius_km: radiusKm.value,
     }),
   { server: true },
 )
 
 const listings = computed<Listing[]>(() => data.value || [])
+const { user } = useAuth()
+const { listFavouriteIds, toggleFavourite } = useFavourites()
+const favSet = ref<Set<string>>(new Set())
+
+if (user.value) {
+  const ids = await listFavouriteIds()
+  favSet.value = new Set(ids)
+}
+
+async function onToggleFav(id: string) {
+  if (!user.value) return navigateTo('/login')
+  favSet.value = await toggleFavourite(id, favSet.value)
+}
 
 function onSearch() {
   navigateTo({
-    query: { q: q.value || undefined, cat: cat.value || undefined, min: min.value, max: max.value },
+    query: {
+      q: q.value || undefined,
+      cat: cat.value || undefined,
+      min: min.value,
+      max: max.value,
+      lat: centerLat.value,
+      lng: centerLng.value,
+      r: radiusKm.value,
+    },
   })
 }
 
@@ -79,6 +114,8 @@ useHead(() => ({
     { name: 'description', content: 'Open Ground classifieds marketplace' },
     { property: 'og:title', content: 'Open Ground' },
     { property: 'og:type', content: 'website' },
+    { property: 'og:description', content: 'Find great local deals on Open Ground' },
+    { property: 'og:url', content: useRequestURL().href },
   ],
   script: [
     {
@@ -101,6 +138,14 @@ useHead(() => ({
 }))
 
 const categories = ['Electronics', 'Home', 'Vehicles', 'Jobs']
+
+function useCurrentLocation() {
+  if (!navigator.geolocation) return
+  navigator.geolocation.getCurrentPosition((pos) => {
+    centerLat.value = pos.coords.latitude
+    centerLng.value = pos.coords.longitude
+  })
+}
 </script>
 
 <style scoped>

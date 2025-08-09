@@ -1,6 +1,32 @@
 <template>
   <NuxtLayout>
-    <NuxtPage />
+    <header
+      class="card row-between"
+      style="
+        padding: 12px 16px;
+        margin: 12px;
+        position: sticky;
+        top: 8px;
+        z-index: 10;
+        backdrop-filter: blur(10px);
+      "
+    >
+      <NuxtLink href="/" class="row" style="gap: 10px">
+        <div class="pill" style="background: var(--og-accent); color: #0b0b0c; font-weight: 800">
+          OG
+        </div>
+        <strong>Open Ground</strong>
+      </NuxtLink>
+      <nav class="row" style="gap: 8px">
+        <NuxtLink class="btn" href="/">Browse</NuxtLink>
+        <NuxtLink class="btn" href="/favourites">Favourites</NuxtLink>
+        <NuxtLink class="btn" href="/new-listing">Post</NuxtLink>
+        <NuxtLink class="btn" href="/me/listings">My</NuxtLink>
+      </nav>
+    </header>
+    <main class="container" style="padding: 8px 0 40px">
+      <NuxtPage />
+    </main>
   </NuxtLayout>
   <ClientOnly>
     <div id="toasts" />
@@ -9,6 +35,7 @@
 
 <script setup lang="ts">
 import { useHead } from '#app'
+import '~~/assets/css/main.css'
 useHead({
   titleTemplate: (title?: string) => (title ? `${title} · Open Ground` : 'Open Ground'),
   link: [{ rel: 'icon', href: '/favicon.ico' }],
