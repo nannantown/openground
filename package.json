@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nuxt dev",
     "build": "nuxt build",
+    "vercel-build": "npm i --legacy-peer-deps && nuxt build",
     "preview": "nuxt preview",
     "lint": "eslint . --ext .ts,.tsx,.js,.vue",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.vue --fix",

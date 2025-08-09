@@ -1,0 +1,6 @@
+{
+  "buildCommand": "npm ci || npm i --legacy-peer-deps && npm run build",
+  "framework": "nuxtjs",
+  "installCommand": "npm ci || npm i --legacy-peer-deps"
+}
+
