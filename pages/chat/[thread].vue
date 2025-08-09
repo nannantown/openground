@@ -1,8 +1,9 @@
 <template>
   <main class="container">
-    <ul class="messages">
+    <ul ref="listEl" class="messages">
       <li v-for="m in messages" :key="m.id">
         <div class="body">{{ m.body }}</div>
+        <div class="muted" style="font-size:12px">{{ fromNow(m.created_at) }}</div>
       </li>
     </ul>
     <form class="composer" @submit.prevent="send">
@@ -10,10 +11,11 @@
       <button>Send</button>
     </form>
   </main>
+  
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useAsyncData, useRoute } from '#app'
 import type { Message } from '~~/shared/types'
 import { useChat } from '~~/composables/useChat'
@@ -21,11 +23,20 @@ import { useChat } from '~~/composables/useChat'
 const route = useRoute()
 const { listMessages, sendMessage } = useChat()
 
-const { data, refresh } = await useAsyncData(`thread:${route.params.thread}`, () =>
-  listMessages(String(route.params.thread)),
-)
+const { data, refresh } = await useAsyncData(`thread:${route.params.thread}`, () => listMessages(String(route.params.thread)))
 const messages = computed<Message[]>(() => data.value || [])
 const text = ref('')
+const listEl = ref<HTMLUListElement | null>(null)
+
+function fromNow(iso?: string | null){
+  if(!iso) return ''
+  const d = new Date(iso)
+  const s = (Date.now()-d.getTime())/1000
+  if (s<60) return 'just now'
+  if (s<3600) return `${Math.floor(s/60)}m ago`
+  if (s<86400) return `${Math.floor(s/3600)}h ago`
+  return `${Math.floor(s/86400)}d ago`
+}
 
 async function send() {
   if (!text.value.trim()) return
@@ -33,6 +44,18 @@ async function send() {
   text.value = ''
   await refresh()
 }
+
+function scrollToBottom(){
+  const el = listEl.value
+  if (!el) return
+  requestAnimationFrame(() => {
+    el.scrollTop = el.scrollHeight
+  })
+}
+
+onMounted(scrollToBottom)
+watch(messages, scrollToBottom)
+setInterval(refresh, 4000)
 </script>
 
 <style scoped>

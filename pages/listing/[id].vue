@@ -26,6 +26,8 @@
             <span v-if="isFaved">★ Saved</span>
             <span v-else>☆ Save</span>
           </button>
+          <button v-if="user?.id===listing.owner_id" class="btn" type="button" @click="markSold(true)">Mark sold</button>
+          <button v-if="user?.id===listing.owner_id" class="btn" type="button" @click="markSold(false)">Mark active</button>
         </div>
       </aside>
     </div>
@@ -88,6 +90,13 @@ async function toggleFav(){
   if (!listing.value) return
   if (!user.value) return navigateTo('/login')
   favSet.value = await toggleFavourite(String(listing.value.id), favSet.value)
+}
+
+async function markSold(sold: boolean){
+  if (!listing.value) return
+  if (!user.value) return navigateTo('/login')
+  await $fetch(`/api/listings/${listing.value.id}/status`, { method: 'POST', body: { status: sold ? 'sold' : 'active' } })
+  location.reload()
 }
 
 useHead(() => {
