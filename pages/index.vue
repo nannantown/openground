@@ -114,6 +114,8 @@ useHead(() => ({
     { name: 'description', content: 'Open Ground classifieds marketplace' },
     { property: 'og:title', content: 'Open Ground' },
     { property: 'og:type', content: 'website' },
+    { property: 'og:description', content: 'Find great local deals on Open Ground' },
+    { property: 'og:url', content: useRequestURL().href },
   ],
   script: [
     {
