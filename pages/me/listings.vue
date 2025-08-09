@@ -15,6 +15,7 @@
           <button class="btn" type="button" @click="setStatus(l.id, 'sold')">Sold</button>
           <button class="btn" type="button" @click="setStatus(l.id, 'hidden')">Hidden</button>
           <button class="btn" type="button" @click="edit(l)">Edit</button>
+          <button class="btn" type="button" @click="remove(l.id)">Delete</button>
           <NuxtLink class="btn" :href="`/listing/${l.id}`">Open</NuxtLink>
         </div>
       </li>
@@ -48,6 +49,12 @@ async function edit(l: any){
   const priceStr = prompt('Price', l.price)
   const price = priceStr ? Number(priceStr) : undefined
   await $fetch(`/api/listings/${l.id}`, { method:'PUT', body:{ title, price } })
+  await refresh()
+}
+
+async function remove(id: string){
+  if (!confirm('Delete this listing?')) return
+  await $fetch(`/api/listings/${id}`, { method: 'DELETE' })
   await refresh()
 }
 </script>
