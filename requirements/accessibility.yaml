@@ -1,0 +1,137 @@
+version: 1
+requirements:
+  - id: REQ-001
+    title: ボタンコントラスト修正
+    description: 全画面・コンポーネントのボタンにおいて文字色と背景色のコントラスト不足を解消する
+    priority: must
+    acceptance_criteria:
+      - id: AC-001
+        description: ログインページのボタンコントラスト改善
+        steps:
+          - action: navigate
+            target: "/login"
+          - action: verify_contrast
+            target: "[data-testid='login-button']"
+            expected: "contrast_ratio >= 4.5"
+          - action: verify_contrast
+            target: "[data-testid='oauth-google-button']"
+            expected: "contrast_ratio >= 4.5"
+          - action: verify_contrast
+            target: "[data-testid='oauth-apple-button']"
+            expected: "contrast_ratio >= 4.5"
+      - id: AC-002
+        description: 新規出品ページのボタンコントラスト改善
+        steps:
+          - action: navigate
+            target: "/new-listing"
+          - action: verify_contrast
+            target: "[data-testid='submit-button']"
+            expected: "contrast_ratio >= 4.5"
+          - action: verify_contrast
+            target: "[data-testid='cancel-button']"
+            expected: "contrast_ratio >= 4.5"
+          - action: verify_contrast
+            target: "[data-testid='image-upload-button']"
+            expected: "contrast_ratio >= 4.5"
+      - id: AC-003
+        description: 商品一覧ページのボタンコントラスト改善
+        steps:
+          - action: navigate
+            target: "/"
+          - action: verify_contrast
+            target: "[data-testid='search-button']"
+            expected: "contrast_ratio >= 4.5"
+          - action: verify_contrast
+            target: "[data-testid='filter-button']"
+            expected: "contrast_ratio >= 4.5"
+          - action: verify_contrast
+            target: "[data-testid='favourite-button']"
+            expected: "contrast_ratio >= 4.5"
+      - id: AC-004
+        description: 商品詳細ページのボタンコントラスト改善
+        steps:
+          - action: navigate
+            target: "/listing/[id]"
+          - action: verify_contrast
+            target: "[data-testid='contact-seller-button']"
+            expected: "contrast_ratio >= 4.5"
+          - action: verify_contrast
+            target: "[data-testid='favourite-button']"
+            expected: "contrast_ratio >= 4.5"
+          - action: verify_contrast
+            target: "[data-testid='share-button']"
+            expected: "contrast_ratio >= 4.5"
+      - id: AC-005
+        description: お気に入りページのボタンコントラスト改善
+        steps:
+          - action: navigate
+            target: "/favourites"
+          - action: verify_contrast
+            target: "[data-testid='remove-favourite-button']"
+            expected: "contrast_ratio >= 4.5"
+          - action: verify_contrast
+            target: "[data-testid='view-listing-button']"
+            expected: "contrast_ratio >= 4.5"
+      - id: AC-006
+        description: マイリストページのボタンコントラスト改善
+        steps:
+          - action: navigate
+            target: "/me/listings"
+          - action: verify_contrast
+            target: "[data-testid='new-listing-button']"
+            expected: "contrast_ratio >= 4.5"
+          - action: verify_contrast
+            target: "[data-testid='edit-listing-button']"
+            expected: "contrast_ratio >= 4.5"
+          - action: verify_contrast
+            target: "[data-testid='delete-listing-button']"
+            expected: "contrast_ratio >= 4.5"
+      - id: AC-007
+        description: メッセージページのボタンコントラスト改善
+        steps:
+          - action: navigate
+            target: "/messages/[id]"
+          - action: verify_contrast
+            target: "[data-testid='send-message-button']"
+            expected: "contrast_ratio >= 4.5"
+          - action: verify_contrast
+            target: "[data-testid='back-button']"
+            expected: "contrast_ratio >= 4.5"
+  - id: REQ-002
+    title: E2Eアクセシビリティ検査統合
+    description: 今後の退行を防ぐため全E2Eテストにcolor-contrast検査を自動統合する
+    priority: must
+    acceptance_criteria:
+      - id: AC-008
+        description: Playwright設定にアクセシビリティ検査を統合
+        steps:
+          - action: verify_file_exists
+            target: "playwright.config.ts"
+            expected: "axe-playwright設定が含まれる"
+          - action: verify_test_includes
+            target: "tests/e2e/*.spec.ts"
+            expected: "await page.checkA11y()が全テストに含まれる"
+      - id: AC-009
+        description: CI/CDパイプラインでアクセシビリティ検査実行
+        steps:
+          - action: verify_file_exists
+            target: ".github/workflows/test.yml"
+            expected: "accessibility-testsジョブが定義される"
+          - action: verify_pipeline_step
+            target: "accessibility-tests"
+            expected: "axe-coreによるcolor-contrast検査が実行される"
+      - id: AC-010
+        description: アクセシビリティ違反時のテスト失敗
+        steps:
+          - action: introduce_contrast_violation
+            target: "テストコンポーネント"
+            expected: "意図的にコントラスト違反を作成"
+          - action: run_test
+            target: "npm run test:e2e"
+            expected: "テストが失敗しcolor-contrast違反が報告される"
+          - action: fix_contrast_violation
+            target: "テストコンポーネント"
+            expected: "違反を修正"
+          - action: run_test
+            target: "npm run test:e2e"
+            expected: "テストが成功する"

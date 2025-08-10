@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Requirements Traceability Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { background: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .metric { display: inline-block; margin: 10px 20px 10px 0; }
+        .metric-value { font-size: 2em; font-weight: bold; color: #2563eb; }
+        .metric-label { color: #666; }
+        .category { margin: 20px 0; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
+        .category-header { background: #f9f9f9; padding: 15px; font-weight: bold; }
+        .requirement { padding: 15px; border-bottom: 1px solid #eee; }
+        .req-id { font-weight: bold; color: #2563eb; }
+        .priority { padding: 2px 8px; border-radius: 4px; font-size: 0.8em; color: white; }
+        .priority-critical { background: #dc2626; }
+        .priority-high { background: #ea580c; }
+        .priority-medium { background: #ca8a04; }
+        .priority-low { background: #65a30d; }
+        .criteria { margin: 10px 0; padding-left: 20px; }
+        .criteria li { margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Requirements Traceability Report</h1>
+        <p>Project: Open Ground Marketplace | Version: 1.0.0 | Updated: 2025-01-15</p>
+        
+        <div class="metric">
+            <div class="metric-value">20</div>
+            <div class="metric-label">Total Requirements</div>
+        </div>
+        <div class="metric">
+            <div class="metric-value">5</div>
+            <div class="metric-label">Critical</div>
+        </div>
+        <div class="metric">
+            <div class="metric-value">10</div>
+            <div class="metric-label">High Priority</div>
+        </div>
+    </div>
+
+    
+          <div class="category">
+            <div class="category-header">Authentication (3 requirements)</div>
+            
+          <div class="requirement">
+            <div>
+              <span class="req-id">AUTH-001</span>
+              <span class="priority priority-critical">CRITICAL</span>
+            </div>
+            <h3>User Login with Email/OTP</h3>
+            <p>Users must be able to login using email and OTP verification</p>
+            <div class="criteria">
+              <strong>Acceptance Criteria:</strong>
+              <ul>
+                <li>User can enter email address on login page</li><li>System sends OTP to provided email</li><li>User can enter OTP code for verification</li><li>Successful login redirects to homepage</li><li>Invalid credentials show appropriate error messages</li>
+              </ul>
+            </div>
+          </div>
+        
+          <div class="requirement">
+            <div>
+              <span class="req-id">AUTH-002</span>
+              <span class="priority priority-high">HIGH</span>
+            </div>
+            <h3>OAuth Authentication (Google/Apple)</h3>
+            <p>Users can authenticate using OAuth providers</p>
+            <div class="criteria">
+              <strong>Acceptance Criteria:</strong>
+              <ul>
+                <li>Google OAuth login button is visible</li><li>Apple OAuth login button is visible</li><li>OAuth flow completes successfully</li><li>User profile is created from OAuth data</li>
+              </ul>
+            </div>
+          </div>
+        
+          <div class="requirement">
+            <div>
+              <span class="req-id">AUTH-003</span>
+              <span class="priority priority-high">HIGH</span>
+            </div>
+            <h3>User Session Management</h3>
+            <p>User sessions are properly managed across browser refresh</p>
+            <div class="criteria">
+              <strong>Acceptance Criteria:</strong>
+              <ul>
+                <li>User remains logged in after browser refresh</li><li>Protected pages redirect unauthenticated users</li><li>Logout functionality clears session</li>
+              </ul>
+            </div>
+          </div>
+        
+          </div>
+        
+          <div class="category">
+            <div class="category-header">Listings (4 requirements)</div>
+            
+          <div class="requirement">
+            <div>
+              <span class="req-id">LIST-001</span>
+              <span class="priority priority-critical">CRITICAL</span>
+            </div>
+            <h3>Create New Listing</h3>
+            <p>Authenticated users can create new product listings</p>
+            <div class="criteria">
+              <strong>Acceptance Criteria:</strong>
+              <ul>
+                <li>New listing form is accessible from navigation</li><li>Title field is required and validates</li><li>Description field accepts rich text</li><li>Price field accepts numeric values</li><li>Image upload functionality works</li><li>Category selection is available</li><li>Location/address can be specified</li><li>Form validation prevents invalid submissions</li><li>Successful submission redirects to listing view</li>
+              </ul>
+            </div>
+          </div>
+        
+          <div class="requirement">
+            <div>
+              <span class="req-id">LIST-002</span>
+              <span class="priority priority-critical">CRITICAL</span>
+            </div>
+            <h3>Browse Listings</h3>
+            <p>Users can browse and search through available listings</p>
+            <div class="criteria">
+              <strong>Acceptance Criteria:</strong>
+              <ul>
+                <li>Homepage displays recent listings</li><li>Search functionality filters by keywords</li><li>Category filtering works correctly</li><li>Price range filtering is available</li><li>Location-based search functions</li><li>Pagination handles large result sets</li><li>Loading states are shown appropriately</li>
+              </ul>
+            </div>
+          </div>
+        
+          <div class="requirement">
+            <div>
+              <span class="req-id">LIST-003</span>
+              <span class="priority priority-high">HIGH</span>
+            </div>
+            <h3>View Listing Details</h3>
+            <p>Users can view comprehensive listing information</p>
+            <div class="criteria">
+              <strong>Acceptance Criteria:</strong>
+              <ul>
+                <li>Listing title and description are displayed</li><li>Price is formatted correctly (JPY)</li><li>Image gallery functions properly</li><li>Seller information is shown</li><li>Contact buttons are available</li><li>Favourite functionality works</li><li>Social sharing options exist</li>
+              </ul>
+            </div>
+          </div>
+        
+          <div class="requirement">
+            <div>
+              <span class="req-id">LIST-004</span>
+              <span class="priority priority-high">HIGH</span>
+            </div>
+            <h3>Edit Listing</h3>
+            <p>Listing owners can modify their listings</p>
+            <div class="criteria">
+              <strong>Acceptance Criteria:</strong>
+              <ul>
+                <li>Only listing owner can access edit page</li><li>Edit form is pre-populated with current data</li><li>All fields can be modified</li><li>Changes are saved correctly</li><li>Edit history is maintained</li>
+              </ul>
+            </div>
+          </div>
+        
+          </div>
+        
+          <div class="category">
+            <div class="category-header">Messaging (3 requirements)</div>
+            
+          <div class="requirement">
+            <div>
+              <span class="req-id">MSG-001</span>
+              <span class="priority priority-critical">CRITICAL</span>
+            </div>
+            <h3>Initiate Chat with Seller</h3>
+            <p>Interested buyers can start conversations with sellers</p>
+            <div class="criteria">
+              <strong>Acceptance Criteria:</strong>
+              <ul>
+                <li>Message button is visible on listing pages</li><li>Clicking opens chat interface</li><li>Initial message is sent to seller</li><li>Chat thread is created successfully</li>
+              </ul>
+            </div>
+          </div>
+        
+          <div class="requirement">
+            <div>
+              <span class="req-id">MSG-002</span>
+              <span class="priority priority-high">HIGH</span>
+            </div>
+            <h3>Real-time Messaging</h3>
+            <p>Users can exchange messages in real-time</p>
+            <div class="criteria">
+              <strong>Acceptance Criteria:</strong>
+              <ul>
+                <li>Messages appear in real-time</li><li>Typing indicators are shown</li><li>Message delivery status is indicated</li><li>Message history is preserved</li><li>Image sharing is supported</li>
+              </ul>
+            </div>
+          </div>
+        
+          <div class="requirement">
+            <div>
+              <span class="req-id">MSG-003</span>
+              <span class="priority priority-medium">MEDIUM</span>
+            </div>
+            <h3>Message Thread Management</h3>
+            <p>Users can manage their message threads</p>
+            <div class="criteria">
+              <strong>Acceptance Criteria:</strong>
+              <ul>
+                <li>Message list shows all active conversations</li><li>Unread message counts are displayed</li><li>Thread search functionality works</li><li>Threads can be archived/deleted</li>
+              </ul>
+            </div>
+          </div>
+        
+          </div>
+        
+          <div class="category">
+            <div class="category-header">Profiles (2 requirements)</div>
+            
+          <div class="requirement">
+            <div>
+              <span class="req-id">PROF-001</span>
+              <span class="priority priority-high">HIGH</span>
+            </div>
+            <h3>User Profile Management</h3>
+            <p>Users can manage their profile information</p>
+            <div class="criteria">
+              <strong>Acceptance Criteria:</strong>
+              <ul>
+                <li>Profile page displays user information</li><li>Avatar upload functionality works</li><li>Display name can be changed</li><li>Contact information can be updated</li><li>Profile visibility settings exist</li>
+              </ul>
+            </div>
+          </div>
+        
+          <div class="requirement">
+            <div>
+              <span class="req-id">PROF-002</span>
+              <span class="priority priority-high">HIGH</span>
+            </div>
+            <h3>User Listings Dashboard</h3>
+            <p>Users can view and manage their listings</p>
+            <div class="criteria">
+              <strong>Acceptance Criteria:</strong>
+              <ul>
+                <li>My listings page shows user's items</li><li>Listing status is clearly indicated</li><li>Quick edit/delete actions are available</li><li>Analytics/view counts are shown</li>
+              </ul>
+            </div>
+          </div>
+        
+          </div>
+        
+          <div class="category">
+            <div class="category-header">Favourites (2 requirements)</div>
+            
+          <div class="requirement">
+            <div>
+              <span class="req-id">FAV-001</span>
+              <span class="priority priority-medium">MEDIUM</span>
+            </div>
+            <h3>Add/Remove Favourites</h3>
+            <p>Users can mark listings as favourites</p>
+            <div class="criteria">
+              <strong>Acceptance Criteria:</strong>
+              <ul>
+                <li>Heart icon toggles favourite status</li><li>Favourite status persists across sessions</li><li>Favourite count is displayed</li><li>Only authenticated users can favourite</li>
+              </ul>
+            </div>
+          </div>
+        
+          <div class="requirement">
+            <div>
+              <span class="req-id">FAV-002</span>
+              <span class="priority priority-medium">MEDIUM</span>
+            </div>
+            <h3>Favourites Management</h3>
+            <p>Users can manage their favourite listings</p>
+            <div class="criteria">
+              <strong>Acceptance Criteria:</strong>
+              <ul>
+                <li>Favourites page shows saved items</li><li>Favourites can be organized/filtered</li><li>Bulk actions are available</li><li>Expired listings are handled gracefully</li>
+              </ul>
+            </div>
+          </div>
+        
+          </div>
+        
+          <div class="category">
+            <div class="category-header">Admin (1 requirements)</div>
+            
+          <div class="requirement">
+            <div>
+              <span class="req-id">ADM-001</span>
+              <span class="priority priority-high">HIGH</span>
+            </div>
+            <h3>Admin Dashboard Access</h3>
+            <p>Admin users have access to management dashboard</p>
+            <div class="criteria">
+              <strong>Acceptance Criteria:</strong>
+              <ul>
+                <li>Admin navigation is visible to authorized users</li><li>Dashboard shows key metrics</li><li>User management interface exists</li><li>Listing moderation tools are available</li>
+              </ul>
+            </div>
+          </div>
+        
+          </div>
+        
+          <div class="category">
+            <div class="category-header">Performance (1 requirements)</div>
+            
+          <div class="requirement">
+            <div>
+              <span class="req-id">PERF-001</span>
+              <span class="priority priority-high">HIGH</span>
+            </div>
+            <h3>Page Load Performance</h3>
+            <p>Application pages load within acceptable timeframes</p>
+            <div class="criteria">
+              <strong>Acceptance Criteria:</strong>
+              <ul>
+                <li>Homepage loads in under 2 seconds</li><li>Search results appear in under 1 second</li><li>Images are optimized and lazy-loaded</li><li>Bundle size is minimized</li>
+              </ul>
+            </div>
+          </div>
+        
+          </div>
+        
+          <div class="category">
+            <div class="category-header">Accessibility (2 requirements)</div>
+            
+          <div class="requirement">
+            <div>
+              <span class="req-id">A11Y-001</span>
+              <span class="priority priority-medium">MEDIUM</span>
+            </div>
+            <h3>Keyboard Navigation</h3>
+            <p>All functionality is accessible via keyboard</p>
+            <div class="criteria">
+              <strong>Acceptance Criteria:</strong>
+              <ul>
+                <li>Tab navigation follows logical order</li><li>Focus indicators are visible</li><li>All interactive elements are keyboard accessible</li><li>Skip links are provided</li>
+              </ul>
+            </div>
+          </div>
+        
+          <div class="requirement">
+            <div>
+              <span class="req-id">A11Y-002</span>
+              <span class="priority priority-medium">MEDIUM</span>
+            </div>
+            <h3>Screen Reader Support</h3>
+            <p>Content is accessible to screen readers</p>
+            <div class="criteria">
+              <strong>Acceptance Criteria:</strong>
+              <ul>
+                <li>Images have appropriate alt text</li><li>Headings follow proper hierarchy</li><li>Form labels are properly associated</li><li>ARIA landmarks are used correctly</li>
+              </ul>
+            </div>
+          </div>
+        
+          </div>
+        
+          <div class="category">
+            <div class="category-header">Security (1 requirements)</div>
+            
+          <div class="requirement">
+            <div>
+              <span class="req-id">SEC-001</span>
+              <span class="priority priority-critical">CRITICAL</span>
+            </div>
+            <h3>Data Protection</h3>
+            <p>User data is properly protected</p>
+            <div class="criteria">
+              <strong>Acceptance Criteria:</strong>
+              <ul>
+                <li>Authentication tokens are secure</li><li>Sensitive data is encrypted</li><li>HTTPS is enforced</li><li>Input validation prevents XSS</li>
+              </ul>
+            </div>
+          </div>
+        
+          </div>
+        
+          <div class="category">
+            <div class="category-header">Mobile (1 requirements)</div>
+            
+          <div class="requirement">
+            <div>
+              <span class="req-id">MOB-001</span>
+              <span class="priority priority-high">HIGH</span>
+            </div>
+            <h3>Mobile Responsive Design</h3>
+            <p>Application works correctly on mobile devices</p>
+            <div class="criteria">
+              <strong>Acceptance Criteria:</strong>
+              <ul>
+                <li>Layout adapts to different screen sizes</li><li>Touch interactions work properly</li><li>Text is readable without zooming</li><li>Navigation is thumb-friendly</li>
+              </ul>
+            </div>
+          </div>
+        
+          </div>
+        
+</body>
+</html>

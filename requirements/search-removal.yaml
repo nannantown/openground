@@ -1,0 +1,81 @@
+version: 1
+requirements:
+  - id: REQ-003
+    title: 検索画面削除
+    description: HOME画面と検索画面の機能重複により検索画面を削除し、HOME画面に検索機能を統合する
+    priority: must
+    acceptance_criteria:
+      - id: AC-011
+        description: 検索画面へのアクセスが無効化される
+        steps:
+          - action: navigate
+            target: "/search"
+            expected: "404エラーまたはHOME画面へのリダイレクト"
+          - action: verify_url
+            target: "current_url"
+            expected: "url != '/search'"
+      - id: AC-012
+        description: 検索画面へのリンクが全て削除される
+        steps:
+          - action: navigate
+            target: "/"
+            expected: "HOME画面が表示される"
+          - action: verify_not_exists
+            target: "a[href='/search']"
+            expected: "検索画面へのリンクが存在しない"
+          - action: verify_not_exists
+            target: "[data-testid='search-page-link']"
+            expected: "検索ページリンクが存在しない"
+      - id: AC-013
+        description: HOME画面で検索機能が完全に利用可能
+        steps:
+          - action: navigate
+            target: "/"
+            expected: "HOME画面が表示される"
+          - action: verify_visible
+            target: "[data-testid='search-input']"
+            expected: "検索入力フィールドが表示される"
+          - action: verify_visible
+            target: "[data-testid='search-button']"
+            expected: "検索ボタンが表示される"
+          - action: verify_visible
+            target: "[data-testid='category-select']"
+            expected: "カテゴリ選択が表示される"
+          - action: fill_form
+            target: "[data-testid='search-input']"
+            value: "テスト商品"
+            expected: "検索キーワードが入力される"
+          - action: click
+            target: "[data-testid='search-button']"
+            expected: "検索が実行される"
+          - action: verify_url_contains
+            target: "current_url"
+            expected: "url.includes('q=テスト商品')"
+      - id: AC-014
+        description: 検索結果がHOME画面で正しく表示される
+        steps:
+          - action: navigate
+            target: "/?q=electronics"
+            expected: "HOME画面に検索結果が表示される"
+          - action: verify_visible
+            target: "[data-testid='search-results']"
+            expected: "検索結果セクションが表示される"
+          - action: verify_text_contains
+            target: "[data-testid='search-query']"
+            expected: "text.includes('electronics')"
+          - action: verify_visible
+            target: "[data-testid='listing-card']"
+            expected: "商品カードが表示される"
+      - id: AC-015
+        description: 検索画面のファイルとコンポーネントが削除される
+        steps:
+          - action: verify_file_not_exists
+            target: "src/app/search/page.tsx"
+            expected: "検索ページファイルが存在しない"
+          - action: verify_file_not_exists
+            target: "src/components/SearchPage.tsx"
+            expected: "検索ページコンポーネントが存在しない"
+          - action: verify_no_import
+            target: "src/**/*.tsx"
+            value: "from.*search.*page"
+            expected: "検索ページのimportが存在しない"
