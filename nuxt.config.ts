@@ -1,7 +1,14 @@
 import { defineNuxtConfig } from 'nuxt/config'
 
 export default defineNuxtConfig({
+  ssr: true,
+  pages: true,
+  srcDir: '.',
+  css: ['~/assets/css/main.css'],
   modules: ['@nuxtjs/supabase', '@pinia/nuxt', '@vueuse/nuxt', '@nuxt/image'],
+  imports: {
+    autoImport: true
+  },
   // @ts-expect-error: module options are typed via module augmentations in runtime
   supabase: {
     // Disable global auth redirects; pages manage auth gating explicitly

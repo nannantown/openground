@@ -13,27 +13,3 @@ useHead({
 })
 </script>
 
-<style>
-html,
-body,
-#__nuxt {
-  height: 100%;
-}
-body {
-  font-family:
-    system-ui,
-    -apple-system,
-    Segoe UI,
-    Roboto,
-    Ubuntu,
-    Cantarell,
-    'Helvetica Neue',
-    Arial,
-    'Noto Sans',
-    'Apple Color Emoji',
-    'Segoe UI Emoji',
-    'Segoe UI Symbol',
-    'Noto Color Emoji',
-    sans-serif;
-}
-</style>
