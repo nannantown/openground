@@ -80,7 +80,7 @@ class AutoFixOrchestrator {
       
       suggestions.push({
         test: failure,
-        strategy,
+        strategy: strategy || null,
         autoFixable: !!strategy
       })
     })

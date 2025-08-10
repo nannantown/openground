@@ -73,7 +73,7 @@ test.describe('User Listings Dashboard', () => {
   // @req: PROF-002
   // Users can view and manage their listings
 
-  test('PROF-002: My listings page shows user's items', async ({ page }) => {
+  test('PROF-002: My listings page shows user\'s items', async ({ page }) => {
     // @req: PROF-002
     // @priority: high
     // Test data: {}

@@ -307,7 +307,7 @@ export default function ListingPage() {
                     <div className="font-semibold flex items-center gap-2">
                       {listing.owner.display_name}
                       {listing.owner.is_verified && (
-                        <CheckCircle className="w-5 h-5 text-blue-500" title="認証済み" />
+                        <CheckCircle className="w-5 h-5 text-blue-500" aria-label="認証済み" />
                       )}
                     </div>
                   </div>

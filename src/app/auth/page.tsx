@@ -2,9 +2,9 @@
 
 import { useSupabase } from '@/app/providers'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 
-export default function AuthPage() {
+function AuthContent() {
   const supabase = useSupabase()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -112,5 +112,26 @@ export default function AuthPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function AuthPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+            <div className="text-center">
+              <div className="text-6xl mb-4">⏳</div>
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                読み込み中...
+              </h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    }>
+      <AuthContent />
+    </Suspense>
   )
 }

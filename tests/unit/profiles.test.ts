@@ -56,7 +56,7 @@ describe('Profiles Requirements', () => {
     // @req: PROF-002
     // Users can view and manage their listings
 
-    it('should my listings page shows user's items', async () => {
+    it('should my listings page shows user\'s items', async () => {
       // @req: PROF-002
       // @priority: high
       

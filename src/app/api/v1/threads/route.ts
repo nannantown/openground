@@ -13,6 +13,22 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    // First, get thread IDs where user is a participant
+    const { data: participantThreads, error: participantError } = await supabase
+      .from('participants')
+      .select('thread_id')
+      .eq('user_id', user.id)
+    
+    if (participantError) {
+      return NextResponse.json({ error: 'Failed to fetch participant threads' }, { status: 500 })
+    }
+    
+    const threadIds = participantThreads?.map(p => p.thread_id) || []
+    
+    if (threadIds.length === 0) {
+      return NextResponse.json({ threads: [] })
+    }
+
     // Get threads where user is a participant
     const { data: threads, error } = await supabase
       .from('threads')
@@ -33,13 +49,7 @@ export async function GET(request: NextRequest) {
           )
         )
       `)
-      .in('id', 
-        // Subquery to get thread IDs where user is a participant
-        supabase
-          .from('participants')
-          .select('thread_id')
-          .eq('user_id', user.id)
-      )
+      .in('id', threadIds)
       .order('updated_at', { ascending: false })
 
     if (error) {
@@ -92,17 +102,23 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if thread already exists between these users for this listing
+    const { data: sharedThreads, error: sharedError } = await supabase
+      .from('participants')
+      .select('thread_id')
+      .in('user_id', [user.id, listing.owner_id])
+    
+    if (sharedError) {
+      console.error('Shared threads error:', sharedError)
+      return NextResponse.json({ error: 'Failed to check existing threads' }, { status: 500 })
+    }
+
+    const sharedThreadIds = sharedThreads?.map(p => p.thread_id) || []
+    
     const { data: existingThread, error: threadCheckError } = await supabase
       .from('threads')
       .select('id')
       .eq('listing_id', listing_id)
-      .in('id', 
-        // Subquery to find threads where both users are participants
-        supabase
-          .from('participants')
-          .select('thread_id')
-          .in('user_id', [user.id, listing.owner_id])
-      )
+      .in('id', sharedThreadIds)
       .limit(1)
       .single()
 

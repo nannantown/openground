@@ -17,24 +17,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: route === '' ? 1 : 0.8,
   }))
 
-  // Get dynamic listing pages
-  let listingPages: MetadataRoute.Sitemap = []
-  try {
-    const response = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/v1/listings`, {
-      cache: 'no-store'
-    })
-    if (response.ok) {
-      const listings = await response.json()
-      listingPages = listings.map((listing: any) => ({
-        url: `${baseUrl}/listing/${listing.id}`,
-        lastModified: new Date(listing.created_at),
-        changeFrequency: 'weekly' as const,
-        priority: 0.6,
-      }))
-    }
-  } catch (error) {
-    console.error('Failed to fetch listings for sitemap:', error)
-  }
+  // For static generation, we'll skip dynamic pages for now
+  // In production, these would be generated via ISR or build-time data fetching
+  const listingPages: MetadataRoute.Sitemap = []
 
   return [
     ...staticPages,

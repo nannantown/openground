@@ -25,7 +25,7 @@ export default function NewListingPage() {
     price: '',
     category: '',
     condition: 'good',
-    location: ''
+    address: ''
   })
 
   if (!user) {
@@ -49,7 +49,7 @@ export default function NewListingPage() {
           price: formData.price ? parseFloat(formData.price) : null,
           category: formData.category,
           condition: formData.condition,
-          location: formData.location
+          location: formData.address
         }),
       })
 
@@ -178,11 +178,11 @@ export default function NewListingPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="location">所在地</Label>
+                    <Label htmlFor="address">所在地</Label>
                     <Input
-                      id="location"
-                      value={formData.location}
-                      onChange={(e) => handleInputChange('location', e.target.value)}
+                      id="address"
+                      value={formData.address}
+                      onChange={(e) => handleInputChange('address', e.target.value)}
                       placeholder="例: 東京都渋谷区"
                     />
                   </div>
