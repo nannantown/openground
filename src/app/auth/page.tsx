@@ -4,6 +4,9 @@ import { useSupabase } from '@/app/providers'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState, Suspense } from 'react'
 
+// Force dynamic rendering for this page
+export const dynamic = 'force-dynamic'
+
 function AuthContent() {
   const supabase = useSupabase()
   const router = useRouter()

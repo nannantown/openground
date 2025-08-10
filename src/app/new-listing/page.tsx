@@ -14,6 +14,9 @@ import Link from 'next/link'
 
 const categories = ['Electronics', 'Home', 'Vehicles', 'Jobs', 'Fashion', 'Books', 'Sports', 'Other']
 
+// Force dynamic rendering for this page
+export const dynamic = 'force-dynamic'
+
 export default function NewListingPage() {
   const { user } = useAuth()
   const router = useRouter()
