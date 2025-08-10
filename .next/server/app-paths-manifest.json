@@ -1,9 +1,0 @@
-{
-  "/api/v1/listings/route": "app/api/v1/listings/route.js",
-  "/api/v1/listings/[id]/route": "app/api/v1/listings/[id]/route.js",
-  "/_not-found/page": "app/_not-found/page.js",
-  "/me/listings/page": "app/me/listings/page.js",
-  "/page": "app/page.js",
-  "/new-listing/page": "app/new-listing/page.js",
-  "/listing/[id]/page": "app/listing/[id]/page.js"
-}
