@@ -20,13 +20,11 @@ export default function HomePage() {
           </div>
         </section>
         
-        <section className="pb-16">
-          <div className="container">
-            <Suspense fallback={<div className="text-center py-8">商品を読み込んでいます...</div>}>
-              <ListingGrid />
-            </Suspense>
-          </div>
-        </section>
+            <section className="pb-16">
+      <div className="container">
+        <ListingGrid />
+      </div>
+    </section>
       </main>
     </div>
   )

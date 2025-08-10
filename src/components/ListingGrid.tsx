@@ -19,16 +19,36 @@ export function ListingGrid() {
   const searchQuery = searchParams.get('q') || ''
   const categoryFilter = searchParams.get('cat') || ''
 
-  const { data: listings = [], isLoading } = useQuery({
+  const { data: listings = [], isLoading, error } = useQuery({
     queryKey: ['listings', searchParams.toString()],
     queryFn: async () => {
-      // Use the API route
-      const params = new URLSearchParams(searchParams)
-      const response = await fetch(`/api/v1/listings?${params.toString()}`)
-      if (!response.ok) throw new Error('Failed to fetch listings')
-      return response.json() as Promise<Listing[]>
+      try {
+        // Use the API route
+        const params = new URLSearchParams(searchParams)
+        const url = `/api/v1/listings?${params.toString()}`
+        console.log('Fetching listings from:', url)
+        
+        const response = await fetch(url)
+        console.log('Response status:', response.status)
+        
+        if (!response.ok) {
+          const errorText = await response.text()
+          console.error('API error:', errorText)
+          throw new Error(`Failed to fetch listings: ${response.status}`)
+        }
+        
+        const data = await response.json()
+        console.log('Fetched listings:', data.length, 'items')
+        return data as Listing[]
+      } catch (err) {
+        console.error('Fetch error:', err)
+        throw err
+      }
     },
   })
+
+  // Debug logging
+  console.log('ListingGrid state:', { isLoading, error, listingsCount: listings.length })
 
   const formatPrice = (price?: number | null) => {
     if (price == null) return 'Contact for price'
@@ -41,6 +61,15 @@ export function ListingGrid() {
   const firstImage = (listing: Listing) => {
     const images = listing.images as string[]
     return images?.[0]
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-16">
+        <h3 className="text-xl font-semibold mb-2 text-red-600">エラーが発生しました</h3>
+        <p className="text-muted-foreground">{error.message}</p>
+      </div>
+    )
   }
 
   if (isLoading) {
