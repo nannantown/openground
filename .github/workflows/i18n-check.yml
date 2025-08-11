@@ -1,0 +1,132 @@
+name: 国際化検証
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch: # 手動実行を許可
+
+jobs:
+  i18n-validation:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run static i18n check
+      run: npm run check:i18n
+      continue-on-error: true
+
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+
+    - name: Start development server
+      run: npm run dev &
+      env:
+        NODE_ENV: test
+
+    - name: Wait for server to be ready
+      run: |
+        timeout 60 bash -c 'until curl -f http://localhost:3000/en; do sleep 1; done'
+
+    - name: Run i18n E2E tests
+      run: npm run test:i18n
+      env:
+        CI: true
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 30
+
+    - name: Generate i18n report
+      if: always()
+      run: |
+        echo "## 🌐 国際化検証レポート" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 静的解析結果" >> $GITHUB_STEP_SUMMARY
+        npm run check:i18n > i18n-report.txt 2>&1 || true
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        cat i18n-report.txt >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### E2Eテスト結果" >> $GITHUB_STEP_SUMMARY
+        echo "詳細なテスト結果はArtifactsからplawright-reportをダウンロードしてください。" >> $GITHUB_STEP_SUMMARY
+
+  # Pull Requestの場合、結果をコメントとして投稿
+  pr-comment:
+    runs-on: ubuntu-latest
+    needs: i18n-validation
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Generate i18n analysis
+      run: |
+        npm run check:i18n > i18n-analysis.txt 2>&1 || true
+
+    - name: Comment PR
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const path = require('path');
+          
+          let report = '';
+          try {
+            report = fs.readFileSync('i18n-analysis.txt', 'utf8');
+          } catch (error) {
+            report = 'レポートの生成に失敗しました';
+          }
+          
+          const comment = `
+          ## 🌐 国際化検証結果
+          
+          この Pull Request の変更に対して国際化チェックを実行しました。
+          
+          ### 検証結果
+          
+          \`\`\`
+          ${report}
+          \`\`\`
+          
+          ### 対応が必要な場合
+          
+          - **ハードコードされた日本語**: 翻訳関数 \`useTranslations\` と \`t()\` を使用してください
+          - **存在しない翻訳キー**: \`messages/en.json\` と \`messages/ja.json\` に適切なキーを追加してください
+          - **未翻訳の文字列**: UI文字列は必ず翻訳対応してください
+          
+          詳細な修正方法については開発ガイドラインを参照してください。
+          `;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });

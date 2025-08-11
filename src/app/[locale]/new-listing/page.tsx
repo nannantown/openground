@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
+import { useTranslations } from 'next-intl'
 import { Header } from '@/components/Header'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -20,6 +21,9 @@ export const dynamic = 'force-dynamic'
 export default function NewListingPage() {
   const { user } = useAuth()
   const router = useRouter()
+  const t = useTranslations('newListing')
+  const tCommon = useTranslations('common')
+  const tCategories = useTranslations('categories')
   
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({

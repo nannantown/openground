@@ -1,6 +1,6 @@
 'use client'
 
-import { useSupabase } from '@/app/providers'
+import { useSupabase } from '@/app/[locale]/providers'
 import { useQuery } from '@tanstack/react-query'
 import type { User } from '@supabase/supabase-js'
 

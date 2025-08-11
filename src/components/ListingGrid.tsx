@@ -1,8 +1,9 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { useSupabase } from '@/app/providers'
+import { useSupabase } from '@/app/[locale]/providers'
 import { useSearchParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import Image from 'next/image'
 import { FavouriteButton } from '@/components/FavouriteButton'
@@ -14,6 +15,9 @@ import type { Listing } from '@/shared/types'
 export function ListingGrid() {
   const supabase = useSupabase()
   const searchParams = useSearchParams()
+  const t = useTranslations('listings')
+  const tSearch = useTranslations('search')
+  const tCommon = useTranslations('common')
   
   // Get search query for display
   const searchQuery = searchParams.get('q') || ''
@@ -51,10 +55,10 @@ export function ListingGrid() {
   console.log('ListingGrid state:', { isLoading, error, listingsCount: listings.length })
 
   const formatPrice = (price?: number | null) => {
-    if (price == null) return 'Contact for price'
+    if (price == null) return t('contactPrice')
     return new Intl.NumberFormat(undefined, { 
       style: 'currency', 
-      currency: 'USD' 
+      currency: 'JPY' 
     }).format(Number(price))
   }
 
@@ -66,7 +70,7 @@ export function ListingGrid() {
   if (error) {
     return (
       <div className="text-center py-16">
-        <h3 className="text-xl font-semibold mb-2 text-red-600">エラーが発生しました</h3>
+        <h3 className="text-xl font-semibold mb-2 text-red-600">{tCommon('error')}</h3>
         <p className="text-muted-foreground">{error.message}</p>
       </div>
     )
@@ -76,7 +80,7 @@ export function ListingGrid() {
     return (
       <div className="text-center py-16">
         <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4 text-muted-foreground" />
-        <h3 className="text-xl font-semibold mb-2">読み込み中...</h3>
+        <h3 className="text-xl font-semibold mb-2">{tCommon('loading')}</h3>
       </div>
     )
   }
@@ -86,18 +90,18 @@ export function ListingGrid() {
       <div className="text-center py-16">
         <Search className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
         <h3 className="text-xl font-semibold mb-2">
-          {(searchQuery || categoryFilter) ? '検索結果が見つかりません' : '商品がありません'}
+          {(searchQuery || categoryFilter) ? tSearch('noResults') : t('noListings')}
         </h3>
         <p className="text-muted-foreground mb-6">
           {(searchQuery || categoryFilter) 
-            ? '検索条件を変更するか、すべてのカテゴリを閲覧してください' 
-            : '最初の商品を投稿してマーケットプレースを始めましょう'
+            ? tSearch('noResultsDesc')
+            : t('noListingsDesc')
           }
         </p>
-        <Button asChild>
+        <Button asChild className="bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
           <Link href="/new-listing">
             <Plus className="w-4 h-4 mr-2" />
-            Post Your First Listing
+            {t('postFirst')}
           </Link>
         </Button>
       </div>
@@ -108,25 +112,25 @@ export function ListingGrid() {
     <div data-testid="search-results">
       {(searchQuery || categoryFilter) && (
         <div className="mb-6 p-4 bg-blue-50 rounded-lg">
-          <h2 className="text-lg font-semibold text-blue-800 mb-2">検索結果</h2>
+          <h2 className="text-lg font-semibold text-blue-800 mb-2">{tSearch('searchResults')}</h2>
           <div data-testid="search-query" className="text-blue-700">
             {searchQuery && (
-              <span>キーワード: "{searchQuery}"</span>
+              <span>{tSearch('keyword', { query: searchQuery })}</span>
             )}
             {searchQuery && categoryFilter && <span className="mx-2">•</span>}
             {categoryFilter && (
-              <span>カテゴリ: {categoryFilter}</span>
+              <span>{tSearch('category', { category: categoryFilter })}</span>
             )}
           </div>
           <div className="text-blue-600 text-sm mt-1">
-            {listings.length}件の商品が見つかりました
+            {tSearch('resultsFound', { count: listings.length })}
           </div>
         </div>
       )}
       
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-2xl font-semibold">
-          {(searchQuery || categoryFilter) ? '検索結果' : '最新の商品'}
+          {(searchQuery || categoryFilter) ? tSearch('searchResults') : t('title')}
         </h2>
         <div className="flex gap-2">
           <Button variant="ghost" size="sm">

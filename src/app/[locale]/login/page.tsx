@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useSupabase } from '@/app/providers'
+import { useSupabase } from '@/app/[locale]/providers'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Mail, Key, Loader2, ArrowLeft, Github } from 'lucide-react'

@@ -1,10 +1,13 @@
 'use client'
 
 import { useAuth } from '@/hooks/useAuth'
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
+import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 
 export function Header() {
   const { user, signOut } = useAuth()
+  const t = useTranslations('nav')
 
   return (
     <header className="bg-white border-b border-gray-200">
@@ -16,28 +19,29 @@ export function Header() {
           
           <nav className="hidden md:flex space-x-6">
             <Link href="/" className="text-gray-700 hover:text-blue-600">
-              ホーム
+              {t('home')}
             </Link>
             {user && (
               <Link href="/favourites" className="text-gray-700 hover:text-blue-600">
-                お気に入り
+                {t('favourites')}
               </Link>
             )}
           </nav>
           
           <div className="flex items-center space-x-4">
+            <LanguageSwitcher />
             {user ? (
               <div className="flex items-center space-x-3">
                 <Link href="/me/listings" className="btn btn-ghost">
-                  マイリスト
+                  {t('myListings')}
                 </Link>
                 <button onClick={signOut} className="btn btn-secondary">
-                  サインアウト
+                  {t('signOut')}
                 </button>
               </div>
             ) : (
               <Link href="/login" className="btn btn-primary">
-                サインイン
+                {t('signIn')}
               </Link>
             )}
           </div>

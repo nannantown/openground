@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { MapPin, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -13,6 +14,8 @@ const categories = ['Electronics', 'Home', 'Vehicles', 'Jobs']
 export function SearchForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const t = useTranslations('search')
+  const tCategories = useTranslations('categories')
   
   const [q, setQ] = useState(searchParams.get('q') || '')
   const [cat, setCat] = useState(searchParams.get('cat') || '')
@@ -50,28 +53,28 @@ export function SearchForm() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div className="lg:col-span-2">
-              <Label htmlFor="search">What are you looking for?</Label>
+              <Label htmlFor="search">{t('searchLabel')}</Label>
               <Input
                 data-testid="search-input"
                 id="search"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 type="search"
-                placeholder="Search for anything..."
+                placeholder={t('placeholder')}
               />
             </div>
             <div>
-              <Label htmlFor="category">Category</Label>
+              <Label htmlFor="category">{t('category')}</Label>
               <select 
                 id="category"
                 value={cat} 
                 onChange={(e) => setCat(e.target.value)} 
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <option value="">All Categories</option>
+                <option value="">{t('allCategories')}</option>
                 {categories.map((c) => (
                   <option key={c} value={c}>
-                    {c}
+                    {tCategories(c)}
                   </option>
                 ))}
               </select>
@@ -80,27 +83,27 @@ export function SearchForm() {
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <Label htmlFor="min-price">Min Price</Label>
+              <Label htmlFor="min-price">{t('minPrice')}</Label>
               <Input
                 id="min-price"
                 value={min}
                 onChange={(e) => setMin(e.target.value)}
                 type="number"
-                placeholder="$0"
+                placeholder="¥0"
               />
             </div>
             <div>
-              <Label htmlFor="max-price">Max Price</Label>
+              <Label htmlFor="max-price">{t('maxPrice')}</Label>
               <Input
                 id="max-price"
                 value={max}
                 onChange={(e) => setMax(e.target.value)}
                 type="number"
-                placeholder="Any"
+                placeholder={t('noLimit')}
               />
             </div>
             <div>
-              <Label htmlFor="distance">Distance (km)</Label>
+              <Label htmlFor="distance">{t('distance')}</Label>
               <Input
                 id="distance"
                 value={radiusKm}
@@ -119,7 +122,7 @@ export function SearchForm() {
                 className="w-full border-gray-300 text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400"
               >
                 <MapPin className="w-4 h-4 mr-2" />
-                Use Location
+                {t('useLocation')}
               </Button>
             </div>
           </div>
@@ -132,7 +135,7 @@ export function SearchForm() {
               className="px-12 bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               <Search className="w-4 h-4 mr-2" />
-              Search Listings
+              {t('searchButton')}
             </Button>
           </div>
         </form>

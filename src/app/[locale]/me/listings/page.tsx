@@ -2,7 +2,8 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '@/hooks/useAuth'
-import { useSupabase } from '@/app/providers'
+import { useSupabase } from '@/app/[locale]/providers'
+import { useTranslations } from 'next-intl'
 import { Header } from '@/components/Header'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -13,6 +14,10 @@ import type { Listing } from '@/shared/types'
 
 export default function MyListingsPage() {
   const { user, isLoading: authLoading } = useAuth()
+  const t = useTranslations('myListings')
+  const tAuth = useTranslations('auth')
+  const tCommon = useTranslations('common')
+  const tListings = useTranslations('listings')
   const supabase = useSupabase()
 
   const { data: listings = [], isLoading } = useQuery({
@@ -23,7 +28,7 @@ export default function MyListingsPage() {
       const { data, error } = await supabase
         .from('listings')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('owner_id', user.id)
         .order('created_at', { ascending: false })
       
       if (error) throw error

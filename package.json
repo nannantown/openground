@@ -19,7 +19,11 @@
     "generate:tests": "tsx scripts/generate-tests.ts",
     "test:requirements": "npm run generate:tests && npm run test:all",
     "auto-fix": "tsx scripts/auto-fix.ts",
-    "auto-fix:analyze": "tsx scripts/auto-fix.ts --analyze-only"
+    "auto-fix:analyze": "tsx scripts/auto-fix.ts --analyze-only",
+    "check:i18n": "tsx scripts/check-i18n.ts",
+    "test:i18n": "playwright test tests/e2e/i18n-validation.spec.ts",
+    "test:i18n:ui": "playwright test tests/e2e/i18n-validation.spec.ts --ui",
+    "validate:i18n": "npm run check:i18n && npm run test:i18n"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
@@ -37,6 +41,7 @@
     "clsx": "^2.1.1",
     "lucide-react": "^0.400.0",
     "next": "^15.0.0",
+    "next-intl": "^4.3.4",
     "postcss": "^8.4.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
@@ -62,7 +67,7 @@
     "eslint": "^8.0.0",
     "eslint-config-next": "^15.0.0",
     "jsdom": "^24.1.0",
-    "tsx": "^4.19.0", 
+    "tsx": "^4.19.0",
     "typescript": "^5.0.0",
     "vitest": "^2.1.0",
     "yaml": "^2.5.0"

@@ -1,0 +1,131 @@
+{
+  "nav": {
+    "home": "Home",
+    "favourites": "Favourites",
+    "myListings": "My Listings",
+    "newListing": "Post Listing",
+    "signIn": "Sign In",
+    "signOut": "Sign Out"
+  },
+  "hero": {
+    "title": "Find amazing deals in your area",
+    "subtitle": "Buy and sell everything from electronics to furniture on our trusted marketplace"
+  },
+  "search": {
+    "placeholder": "Search for anything...",
+    "category": "Category",
+    "allCategories": "All Categories",
+    "minPrice": "Min Price",
+    "maxPrice": "Max Price",
+    "distance": "Distance (km)",
+    "useLocation": "Use Location",
+    "searchButton": "Search Listings",
+    "noResults": "No search results found",
+    "noResultsDesc": "Try changing your search terms or browse all categories",
+    "resultsFound": "{count} items found",
+    "searchResults": "Search Results",
+    "keyword": "Keyword: \"{query}\"",
+    "category": "Category: {category}"
+  },
+  "listings": {
+    "title": "Latest Listings",
+    "noListings": "No listings available",
+    "noListingsDesc": "Be the first to post a listing and start the marketplace",
+    "postFirst": "Post Your First Listing",
+    "contactPrice": "Contact for price",
+    "newListing": "New Listing",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "myListings": {
+    "title": "My Listings",
+    "subtitle": "Your posted items",
+    "noListings": "You haven't posted any items yet",
+    "noListingsDesc": "When you have items to sell or give away, post your first listing",
+    "postFirst": "Post Your First Item",
+    "itemsPosted": "{count} items posted",
+    "loading": "Loading listings..."
+  },
+  "favourites": {
+    "title": "Favourites",
+    "subtitle": "Save and manage your saved items here",
+    "noFavourites": "No favourites yet",
+    "noFavouritesDesc": "Find items you like and tap the heart button to add them to favourites",
+    "browse": "Browse Listings",
+    "itemsSaved": "{count} favourites",
+    "loading": "Loading favourites...",
+    "removeFailed": "Failed to remove from favourites. Please try again.",
+    "removeFromFavourites": "Remove from favourites",
+    "addToFavourites": "Add to favourites"
+  },
+  "auth": {
+    "signInRequired": "Sign in required",
+    "signInDesc": "You need to sign in to your account to use this feature",
+    "signIn": "Sign In",
+    "loading": "Loading..."
+  },
+  "categories": {
+    "Electronics": "Electronics",
+    "Home": "Home & Garden",
+    "Vehicles": "Vehicles",
+    "Jobs": "Jobs",
+    "Fashion": "Fashion",
+    "Books": "Books",
+    "Sports": "Sports",
+    "Other": "Other"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "noLimit": "No limit"
+  },
+  "search": {
+    "searchLabel": "What are you looking for?",
+    "placeholder": "Search for anything...",
+    "category": "Category",
+    "allCategories": "All Categories",
+    "minPrice": "Min Price",
+    "maxPrice": "Max Price",
+    "distance": "Distance (km)",
+    "useLocation": "Use Location",
+    "searchButton": "Search Listings",
+    "noResults": "No search results found",
+    "noResultsDesc": "Try changing your search terms or browse all categories",
+    "resultsFound": "{count} items found",
+    "searchResults": "Search Results",
+    "keyword": "Keyword: \"{query}\"",
+    "noLimit": "No limit"
+  },
+  "newListing": {
+    "title": "Post New Item",
+    "subtitle": "List your unwanted items and find them new owners",
+    "backToListings": "Back to My Listings",
+    "itemInfo": "Item Information",
+    "titleLabel": "Item Title *",
+    "titlePlaceholder": "e.g. iPhone 15 Pro Max 256GB",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Please describe the condition, usage period, accessories, etc. in detail",
+    "priceLabel": "Price (¥)",
+    "priceHelp": "Leave blank to display as 'Contact for price'",
+    "categoryLabel": "Category *",
+    "categoryPlaceholder": "Select category",
+    "conditionLabel": "Condition *",
+    "conditionNew": "New",
+    "conditionExcellent": "Excellent",
+    "conditionGood": "Good",
+    "conditionFair": "Fair",
+    "conditionPoor": "Poor",
+    "locationLabel": "Location",
+    "locationPlaceholder": "e.g. Tokyo, Shibuya",
+    "imagesLabel": "Images",
+    "imagesUpload": "Upload images (max 5)",
+    "imagesFormat": "Supports JPG, PNG, WEBP formats",
+    "selectFiles": "Select Files (In Development)",
+    "posting": "Posting...",
+    "postItem": "Post Item",
+    "postSuccess": "Item posted successfully!",
+    "postError": "Failed to post item. Please try again."
+  }
+}

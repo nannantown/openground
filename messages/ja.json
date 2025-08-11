@@ -1,0 +1,131 @@
+{
+  "nav": {
+    "home": "ホーム",
+    "favourites": "お気に入り",
+    "myListings": "マイリスト",
+    "newListing": "商品投稿",
+    "signIn": "サインイン",
+    "signOut": "サインアウト"
+  },
+  "hero": {
+    "title": "地域で素晴らしい商品を見つけよう",
+    "subtitle": "コミュニティで安心して売買。ユニークなアイテムを発見し、地元の販売者とつながり、お得な商品を見つけましょう。"
+  },
+  "search": {
+    "placeholder": "何でも検索...",
+    "category": "カテゴリ",
+    "allCategories": "すべてのカテゴリ",
+    "minPrice": "最低価格",
+    "maxPrice": "最高価格",
+    "distance": "距離 (km)",
+    "useLocation": "現在地を使用",
+    "searchButton": "商品を検索",
+    "noResults": "検索結果が見つかりません",
+    "noResultsDesc": "検索条件を変更するか、すべてのカテゴリを閲覧してください",
+    "resultsFound": "{count}件の商品が見つかりました",
+    "searchResults": "検索結果",
+    "keyword": "キーワード: \"{query}\"",
+    "category": "カテゴリ: {category}"
+  },
+  "listings": {
+    "title": "最新の商品",
+    "noListings": "商品がありません",
+    "noListingsDesc": "最初の商品を投稿してマーケットプレースを始めましょう",
+    "postFirst": "最初の商品を投稿",
+    "contactPrice": "価格相談",
+    "newListing": "新しい商品",
+    "edit": "編集",
+    "delete": "削除"
+  },
+  "myListings": {
+    "title": "マイリスト",
+    "subtitle": "あなたが投稿した商品一覧",
+    "noListings": "まだ商品を投稿していません",
+    "noListingsDesc": "不要になった商品や売りたい商品がある場合は、商品を投稿してみましょう",
+    "postFirst": "初回商品投稿",
+    "itemsPosted": "{count}件の商品を投稿済み",
+    "loading": "リストを読み込み中..."
+  },
+  "favourites": {
+    "title": "お気に入り",
+    "subtitle": "保存したアイテムをここで管理できます",
+    "noFavourites": "まだお気に入りがありません",
+    "noFavouritesDesc": "気になる商品を見つけて、ハートボタンを押してお気に入りに追加しましょう",
+    "browse": "商品を探す",
+    "itemsSaved": "{count}件のお気に入り",
+    "loading": "お気に入りを読み込み中...",
+    "removeFailed": "お気に入りの削除に失敗しました。もう一度お試しください。",
+    "removeFromFavourites": "お気に入りから削除",
+    "addToFavourites": "お気に入りに追加"
+  },
+  "auth": {
+    "signInRequired": "サインインが必要です",
+    "signInDesc": "この機能を使用するには、アカウントにサインインしてください",
+    "signIn": "サインイン",
+    "loading": "読み込み中..."
+  },
+  "categories": {
+    "Electronics": "電化製品",
+    "Home": "ホーム・ガーデン",
+    "Vehicles": "車・バイク",
+    "Jobs": "求人",
+    "Fashion": "ファッション",
+    "Books": "本",
+    "Sports": "スポーツ",
+    "Other": "その他"
+  },
+  "common": {
+    "cancel": "キャンセル",
+    "save": "保存",
+    "loading": "読み込み中...",
+    "error": "エラーが発生しました",
+    "noLimit": "指定なし"
+  },
+  "search": {
+    "searchLabel": "何をお探しですか？",
+    "placeholder": "何でも検索...",
+    "category": "カテゴリ",
+    "allCategories": "すべてのカテゴリ",
+    "minPrice": "最低価格",
+    "maxPrice": "最高価格",
+    "distance": "距離 (km)",
+    "useLocation": "現在地を使用",
+    "searchButton": "商品を検索",
+    "noResults": "検索結果が見つかりません",
+    "noResultsDesc": "検索条件を変更するか、すべてのカテゴリを閲覧してください",
+    "resultsFound": "{count}件の商品が見つかりました",
+    "searchResults": "検索結果",
+    "keyword": "キーワード: \"{query}\"",
+    "noLimit": "指定なし"
+  },
+  "newListing": {
+    "title": "新しい商品を投稿",
+    "subtitle": "不要になった商品を出品して、新しいオーナーを見つけましょう",
+    "backToListings": "マイリストに戻る",
+    "itemInfo": "商品情報",
+    "titleLabel": "商品名 *",
+    "titlePlaceholder": "例: iPhone 15 Pro Max 256GB",
+    "descriptionLabel": "商品の説明",
+    "descriptionPlaceholder": "商品の状態、使用期間、付属品などを詳しく記載してください",
+    "priceLabel": "価格 (円)",
+    "priceHelp": "空欄の場合は「価格相談」として表示されます",
+    "categoryLabel": "カテゴリ *",
+    "categoryPlaceholder": "カテゴリを選択",
+    "conditionLabel": "商品の状態 *",
+    "conditionNew": "新品",
+    "conditionExcellent": "美品",
+    "conditionGood": "良好",
+    "conditionFair": "普通",
+    "conditionPoor": "難あり",
+    "locationLabel": "所在地",
+    "locationPlaceholder": "例: 東京都渋谷区",
+    "imagesLabel": "商品画像",
+    "imagesUpload": "画像をアップロード (最大5枚)",
+    "imagesFormat": "JPG, PNG, WEBP形式に対応",
+    "selectFiles": "ファイルを選択 (開発中)",
+    "posting": "投稿中...",
+    "postItem": "商品を投稿する",
+    "postSuccess": "商品の投稿が完了しました！",
+    "postError": "商品の投稿に失敗しました。もう一度お試しください。"
+  }
+}

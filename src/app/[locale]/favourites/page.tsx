@@ -2,7 +2,8 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '@/hooks/useAuth'
-import { useSupabase } from '@/app/providers'
+import { useSupabase } from '@/app/[locale]/providers'
+import { useTranslations } from 'next-intl'
 import { Header } from '@/components/Header'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -16,6 +17,10 @@ export default function FavouritesPage() {
   const { user, isLoading: authLoading } = useAuth()
   const supabase = useSupabase()
   const router = useRouter()
+  const t = useTranslations('favourites')
+  const tAuth = useTranslations('auth')
+  const tCommon = useTranslations('common')
+  const tListings = useTranslations('listings')
 
   const { data: favourites = [], isLoading, refetch } = useQuery({
     queryKey: ['favourites-full'],
@@ -49,13 +54,13 @@ export default function FavouritesPage() {
       await refetch()
     } catch (error) {
       console.error('Error removing favourite:', error)
-      alert('お気に入りの削除に失敗しました。もう一度お試しください。')
+      alert(t('removeFailed') || 'お気に入りの削除に失敗しました。もう一度お試しください。')
     }
   }
 
   const formatPrice = (price?: number | null) => {
-    if (price == null) return '価格相談'
-    return new Intl.NumberFormat('ja-JP', { 
+    if (price == null) return tListings('contactPrice')
+    return new Intl.NumberFormat(undefined, { 
       style: 'currency', 
       currency: 'JPY' 
     }).format(Number(price))
@@ -67,7 +72,7 @@ export default function FavouritesPage() {
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('ja-JP', { 
+    return new Date(dateString).toLocaleDateString(undefined, { 
       month: 'short', 
       day: 'numeric', 
       year: 'numeric' 
@@ -81,7 +86,7 @@ export default function FavouritesPage() {
         <div className="container py-16">
           <div className="text-center">
             <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4" />
-            <p>読み込み中...</p>
+            <p>{tCommon('loading')}</p>
           </div>
         </div>
       </div>
@@ -95,14 +100,14 @@ export default function FavouritesPage() {
         <div className="container py-16">
           <div className="max-w-md mx-auto text-center bg-white p-8 rounded-lg shadow-md">
             <Lock className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-            <h2 className="text-2xl font-semibold mb-4">サインインが必要です</h2>
+            <h2 className="text-2xl font-semibold mb-4">{tAuth('signInRequired')}</h2>
             <p className="text-gray-600 mb-6">
-              お気に入り機能を使用するには、アカウントにサインインしてください
+              {tAuth('signInDesc')}
             </p>
             <Button data-testid="login-button" asChild size="lg" className="bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
               <Link href="/login">
                 <Key className="w-4 h-4 mr-2" />
-                サインイン
+                {tAuth('signIn')}
               </Link>
             </Button>
           </div>
@@ -123,13 +128,13 @@ export default function FavouritesPage() {
               <div>
                 <h1 className="text-2xl font-bold mb-2 flex items-center gap-2">
                   <Heart className="w-6 h-6 text-red-500 fill-current" />
-                  お気に入り
+                  {t('title')}
                 </h1>
-                <p className="text-gray-600">保存したアイテムをここで管理できます</p>
+                <p className="text-gray-600">{t('subtitle')}</p>
               </div>
               {favourites.length > 0 && (
                 <div className="bg-yellow-500 text-black px-4 py-2 rounded-full text-sm font-semibold">
-                  {favourites.length} 件のお気に入り
+                  {t('itemsSaved', { count: favourites.length })}
                 </div>
               )}
             </div>
@@ -139,7 +144,7 @@ export default function FavouritesPage() {
           {isLoading && (
             <div className="text-center py-16">
               <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4" />
-              <p>お気に入りを読み込み中...</p>
+              <p>{t('loading')}</p>
             </div>
           )}
 
@@ -147,14 +152,14 @@ export default function FavouritesPage() {
           {!isLoading && favourites.length === 0 && (
             <div className="text-center py-16">
               <HeartOff className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-              <h2 className="text-xl font-semibold mb-2">まだお気に入りがありません</h2>
+              <h2 className="text-xl font-semibold mb-2">{t('noFavourites')}</h2>
               <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                気になる商品を見つけて、ハートボタンを押してお気に入りに追加しましょう
+                {t('noFavouritesDesc')}
               </p>
               <Button data-testid="browse-listings-button" asChild size="lg" className="bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                 <Link href="/">
                   <Home className="w-4 h-4 mr-2" />
-                  商品を探す
+                  {t('browse')}
                 </Link>
               </Button>
             </div>
@@ -184,7 +189,7 @@ export default function FavouritesPage() {
                       size="icon"
                       variant="destructive"
                       className="absolute top-2 right-2 w-8 h-8 bg-destructive/80 hover:bg-destructive/90"
-                      title="お気に入りから削除"
+                      title={t('removeFromFavourites') || 'お気に入りから削除'}
                     >
                       <HeartOff className="w-4 h-4" />
                     </Button>

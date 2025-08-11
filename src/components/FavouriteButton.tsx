@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { useFavourites } from '@/hooks/useFavourites'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Heart, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -17,6 +18,8 @@ export function FavouriteButton({ listingId, className = '' }: FavouriteButtonPr
   const { favouriteIds, toggleFavourite, isToggling } = useFavourites()
   const router = useRouter()
   const [isAnimating, setIsAnimating] = useState(false)
+  const t = useTranslations('common')
+  const tFav = useTranslations('favourites')
 
   const isFavourite = favouriteIds.includes(listingId)
 
@@ -39,7 +42,7 @@ export function FavouriteButton({ listingId, className = '' }: FavouriteButtonPr
       }, 300)
     } catch (error) {
       console.error('Error toggling favourite:', error)
-      alert('エラーが発生しました。もう一度お試しください。')
+      alert(t('error'))
       setIsAnimating(false)
     }
   }
@@ -61,7 +64,7 @@ export function FavouriteButton({ listingId, className = '' }: FavouriteButtonPr
         ${isAnimating ? 'scale-110' : 'hover:scale-105'}
         ${className}
       `}
-      title={isFavourite ? 'お気に入りから削除' : 'お気に入りに追加'}
+      title={isFavourite ? tFav('removeFromFavourites') : tFav('addToFavourites')}
     >
       {isToggling ? (
         <Loader2 className="h-4 w-4 animate-spin" />
