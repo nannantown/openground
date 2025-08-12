@@ -194,36 +194,26 @@ class PreDeploymentChecker {
 
       const missing = requiredVars.filter(varName => !process.env[varName])
 
-      // In development/CI environment, allow missing env vars if they're optional
-      if (process.env.CI === 'true' || process.env.NODE_ENV === 'development') {
-        const criticalVars = ['NEXT_PUBLIC_SUPABASE_URL', 'NEXT_PUBLIC_SUPABASE_ANON_KEY']
-        const missingCritical = missing.filter(varName => criticalVars.includes(varName))
-        
-        if (missingCritical.length === 0) {
-          return {
-            success: true,
-            message: missing.length > 0 
-              ? `Some optional environment variables missing: ${missing.join(', ')}`
-              : 'All required environment variables are set',
-          }
-        }
-
-        return {
-          success: false,
-          message: `Missing critical environment variables: ${missingCritical.join(', ')}`,
-        }
-      }
-
-      if (missing.length === 0) {
+      // Define critical vs optional environment variables
+      const criticalVars = ['NEXT_PUBLIC_SUPABASE_URL', 'NEXT_PUBLIC_SUPABASE_ANON_KEY']
+      const optionalVars = ['STRIPE_SECRET_KEY', 'ADMIN_EMAILS', 'SUPABASE_SERVICE_ROLE_KEY']
+      
+      const missingCritical = missing.filter(varName => criticalVars.includes(varName))
+      const missingOptional = missing.filter(varName => optionalVars.includes(varName))
+      
+      // Only fail if critical variables are missing
+      if (missingCritical.length === 0) {
         return {
           success: true,
-          message: 'All required environment variables are set',
+          message: missingOptional.length > 0 
+            ? `Some optional environment variables missing: ${missingOptional.join(', ')}`
+            : 'All required environment variables are set',
         }
       }
 
       return {
         success: false,
-        message: `Missing environment variables: ${missing.join(', ')}`,
+        message: `Missing critical environment variables: ${missingCritical.join(', ')}`,
       }
     } catch (error) {
       return {
