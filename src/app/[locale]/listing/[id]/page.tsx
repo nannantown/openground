@@ -254,14 +254,15 @@ export default function ListingPage() {
                 
                 {!isOwner && (
                   <div className="space-y-3">
-                    <button
+                    <Button
                       data-testid="contact-seller-button"
                       onClick={startChat}
                       variant="primary"
+                      className="w-full"
                     >
                       <MessageCircle className="w-4 h-4 mr-2" />
                       出品者にメッセージ
-                    </button>
+                    </Button>
                     <Button data-testid="phone-contact-button" variant="outline" className="w-full">
                       <Phone className="w-4 h-4 mr-2" />
                       電話で問い合わせ
@@ -271,10 +272,12 @@ export default function ListingPage() {
 
                 {isOwner && (
                   <div className="space-y-3">
-                    <Link data-testid="edit-listing-button" href={`/listing/${listing.id}/edit`} variant="primary">
-                      <Edit className="w-4 h-4 mr-2" />
-                      編集
-                    </Link>
+                    <Button data-testid="edit-listing-button" asChild variant="primary" className="w-full">
+                      <Link href={`/listing/${listing.id}/edit`}>
+                        <Edit className="w-4 h-4 mr-2" />
+                        編集
+                      </Link>
+                    </Button>
                     <div className="text-sm text-gray-600">
                       これはあなたの商品です
                     </div>
