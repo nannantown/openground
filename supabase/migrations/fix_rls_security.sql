@@ -2,6 +2,28 @@
 -- This migration addresses the database linter errors for RLS disabled tables
 
 -- ==============================================
+-- 0. Create necessary ENUM types for data integrity
+-- ==============================================
+-- Create listing status enum if it doesn't exist
+DO $$ BEGIN
+    CREATE TYPE listing_status AS ENUM ('active', 'sold', 'expired');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+-- Create thread status enum if it doesn't exist
+DO $$ BEGIN
+    CREATE TYPE thread_status AS ENUM ('open', 'closed');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+-- Update existing tables to use enum types (if they're currently text)
+-- Note: This is safe because it only affects future inserts, existing data remains unchanged
+ALTER TABLE public.listings ALTER COLUMN status TYPE listing_status USING status::listing_status;
+ALTER TABLE public.threads ALTER COLUMN status TYPE thread_status USING status::thread_status;
+
+-- ==============================================
 -- 1. Fix spatial_ref_sys table RLS issue
 -- ==============================================
 -- Note: spatial_ref_sys is a PostGIS system table

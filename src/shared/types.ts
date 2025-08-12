@@ -1,5 +1,9 @@
 export type UUID = string
 
+// Database enum types for type safety
+export type ListingStatus = 'active' | 'sold' | 'expired'
+export type ThreadStatus = 'open' | 'closed'
+
 export type User = {
   id: UUID
   display_name: string
@@ -21,7 +25,7 @@ export type Listing = {
   lat: number | null
   lng: number | null
   images: string[]
-  status: 'active' | 'sold' | 'expired'
+  status: ListingStatus
   promoted_type: 'none' | 'spotlight' | 'top'
   created_at: string
   expires_at: string
