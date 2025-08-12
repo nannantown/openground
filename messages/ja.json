@@ -96,7 +96,11 @@
     "resultsFound": "{count}件の商品が見つかりました",
     "searchResults": "検索結果",
     "keyword": "キーワード: \"{query}\"",
-    "noLimit": "指定なし"
+    "noLimit": "指定なし",
+    "locationSet": "位置情報設定済み",
+    "gettingLocation": "位置情報取得中...",
+    "locationNotSupported": "このブラウザでは位置情報がサポートされていません",
+    "locationError": "位置情報の取得に失敗しました。もう一度お試しください。"
   },
   "newListing": {
     "title": "新しい商品を投稿",
@@ -127,5 +131,50 @@
     "postItem": "商品を投稿する",
     "postSuccess": "商品の投稿が完了しました！",
     "postError": "商品の投稿に失敗しました。もう一度お試しください。"
+  },
+  "editListing": {
+    "title": "商品編集",
+    "subtitle": "商品情報を更新しましょう",
+    "backToListing": "商品詳細に戻る",
+    "backToListings": "マイリストに戻る",
+    "editDetails": "詳細編集",
+    "titleLabel": "商品名 *",
+    "titlePlaceholder": "例: iPhone 15 Pro Max 256GB",
+    "descriptionLabel": "商品の説明",
+    "descriptionPlaceholder": "商品の状態、使用期間、付属品などを詳しく記載してください",
+    "priceLabel": "価格 (円)",
+    "priceNote": "空欄の場合は「価格相談」として表示されます",
+    "categoryLabel": "カテゴリ *",
+    "selectCategory": "カテゴリを選択",
+    "conditionLabel": "商品の状態 *",
+    "conditionNew": "新品",
+    "conditionExcellent": "美品",
+    "conditionGood": "良好",
+    "conditionFair": "普通",
+    "conditionPoor": "難あり",
+    "locationLabel": "所在地",
+    "locationPlaceholder": "例: 東京都渋谷区",
+    "imagesLabel": "商品画像",
+    "updating": "更新中...",
+    "updateButton": "商品を更新",
+    "updateFailed": "商品の更新に失敗しました。もう一度お試しください。",
+    "listingNotFound": "商品が見つかりません",
+    "listingNotFoundDesc": "この商品は削除されたか、存在しません",
+    "accessDenied": "アクセス拒否",
+    "accessDeniedDesc": "この商品を編集する権限がありません"
+  },
+  "imageUpload": {
+    "dragDropFiles": "画像をドラッグ&ドロップするか、クリックして選択",
+    "dropFiles": "ここにファイルをドロップ",
+    "supportedFormats": "JPG、PNG、WEBP形式対応",
+    "maxFiles": "あと{count}枚まで追加可能",
+    "selectFiles": "ファイルを選択",
+    "uploading": "アップロード中...",
+    "uploadError": "画像のアップロードに失敗しました。もう一度お試しください。",
+    "maxFilesError": "最大{max}枚まで選択可能です",
+    "imagePreview": "画像{index}",
+    "mainImage": "メイン",
+    "addMore": "追加",
+    "removeImage": "画像を削除"
   }
 }

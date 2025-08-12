@@ -1,0 +1,448 @@
+{
+  "totalButtons": 41,
+  "issueCount": 2,
+  "buttonsByType": {
+    "link-button": 36,
+    "Button": 3,
+    "button": 2
+  },
+  "issuesBySeverity": {
+    "critical": 0,
+    "high": 0,
+    "medium": 2,
+    "low": 0
+  },
+  "fileStats": {
+    "src/app/[locale]/favourites/page.tsx": {
+      "buttons": 4,
+      "issues": 0
+    },
+    "src/app/[locale]/listing/[id]/edit/page.tsx": {
+      "buttons": 8,
+      "issues": 0
+    },
+    "src/app/[locale]/listing/[id]/page.tsx": {
+      "buttons": 4,
+      "issues": 0
+    },
+    "src/app/[locale]/me/listings/page.tsx": {
+      "buttons": 9,
+      "issues": 0
+    },
+    "src/app/[locale]/messages/[id]/page.tsx": {
+      "buttons": 4,
+      "issues": 0
+    },
+    "src/app/[locale]/messages/page.tsx": {
+      "buttons": 4,
+      "issues": 0
+    },
+    "src/app/[locale]/new-listing/page.tsx": {
+      "buttons": 2,
+      "issues": 0
+    },
+    "src/app/[locale]/user/[id]/page.tsx": {
+      "buttons": 3,
+      "issues": 1
+    },
+    "src/components/Header.tsx": {
+      "buttons": 1,
+      "issues": 1
+    },
+    "src/components/ListingGrid.tsx": {
+      "buttons": 2,
+      "issues": 0
+    }
+  },
+  "buttons": [
+    {
+      "id": "btn-src/app/[locale]/favourites/page.tsx-1",
+      "file": "src/app/[locale]/favourites/page.tsx",
+      "line": 101,
+      "element": "<Button data-testid=\"login-button\" asChild size=\"lg\" variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/favourites/page.tsx-2",
+      "file": "src/app/[locale]/favourites/page.tsx",
+      "line": 101,
+      "element": "<Button data-testid=\"login-button\" asChild size=\"lg\" variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/favourites/page.tsx-3",
+      "file": "src/app/[locale]/favourites/page.tsx",
+      "line": 153,
+      "element": "<Button data-testid=\"browse-listings-button\" asChild size=\"lg\" variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/favourites/page.tsx-4",
+      "file": "src/app/[locale]/favourites/page.tsx",
+      "line": 153,
+      "element": "<Button data-testid=\"browse-listings-button\" asChild size=\"lg\" variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/listing/[id]/edit/page.tsx-1",
+      "file": "src/app/[locale]/listing/[id]/edit/page.tsx",
+      "line": 157,
+      "element": "<Button asChild size=\"lg\" variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/listing/[id]/edit/page.tsx-2",
+      "file": "src/app/[locale]/listing/[id]/edit/page.tsx",
+      "line": 157,
+      "element": "<Button asChild size=\"lg\" variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/listing/[id]/edit/page.tsx-3",
+      "file": "src/app/[locale]/listing/[id]/edit/page.tsx",
+      "line": 180,
+      "element": "<Button asChild variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/listing/[id]/edit/page.tsx-4",
+      "file": "src/app/[locale]/listing/[id]/edit/page.tsx",
+      "line": 180,
+      "element": "<Button asChild variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/listing/[id]/edit/page.tsx-5",
+      "file": "src/app/[locale]/listing/[id]/edit/page.tsx",
+      "line": 205,
+      "element": "<Button asChild variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/listing/[id]/edit/page.tsx-6",
+      "file": "src/app/[locale]/listing/[id]/edit/page.tsx",
+      "line": 205,
+      "element": "<Button asChild variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/listing/[id]/edit/page.tsx-7",
+      "file": "src/app/[locale]/listing/[id]/edit/page.tsx",
+      "line": 224,
+      "element": "<Button variant=\"ghost\" asChild className=\"mb-4\">",
+      "type": "link-button",
+      "variant": "ghost",
+      "className": "mb-4",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/listing/[id]/edit/page.tsx-8",
+      "file": "src/app/[locale]/listing/[id]/edit/page.tsx",
+      "line": 224,
+      "element": "<Button variant=\"ghost\" asChild className=\"mb-4\">",
+      "type": "link-button",
+      "variant": "ghost",
+      "className": "mb-4",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/listing/[id]/page.tsx-1",
+      "file": "src/app/[locale]/listing/[id]/page.tsx",
+      "line": 114,
+      "element": "<Button data-testid=\"home-button\" asChild variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/listing/[id]/page.tsx-2",
+      "file": "src/app/[locale]/listing/[id]/page.tsx",
+      "line": 114,
+      "element": "<Button data-testid=\"home-button\" asChild variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/listing/[id]/page.tsx-3",
+      "file": "src/app/[locale]/listing/[id]/page.tsx",
+      "line": 265,
+      "element": "<Button data-testid=\"phone-contact-button\" variant=\"outline\" className=\"w-full\">",
+      "type": "Button",
+      "variant": "outline",
+      "className": "w-full",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/listing/[id]/page.tsx-4",
+      "file": "src/app/[locale]/listing/[id]/page.tsx",
+      "line": 349,
+      "element": "<Button data-testid=\"report-button\" variant=\"ghost\" className=\"w-full text-red-600 hover:bg-red-50\">",
+      "type": "Button",
+      "variant": "ghost",
+      "className": "w-full text-red-600 hover:bg-red-50",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/me/listings/page.tsx-1",
+      "file": "src/app/[locale]/me/listings/page.tsx",
+      "line": 86,
+      "element": "<Button asChild size=\"lg\" variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/me/listings/page.tsx-2",
+      "file": "src/app/[locale]/me/listings/page.tsx",
+      "line": 86,
+      "element": "<Button asChild size=\"lg\" variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/me/listings/page.tsx-3",
+      "file": "src/app/[locale]/me/listings/page.tsx",
+      "line": 115,
+      "element": "<Button data-testid=\"new-listing-button\" asChild variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/me/listings/page.tsx-4",
+      "file": "src/app/[locale]/me/listings/page.tsx",
+      "line": 115,
+      "element": "<Button data-testid=\"new-listing-button\" asChild variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/me/listings/page.tsx-5",
+      "file": "src/app/[locale]/me/listings/page.tsx",
+      "line": 148,
+      "element": "<Button data-testid=\"first-listing-button\" asChild size=\"lg\" variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/me/listings/page.tsx-6",
+      "file": "src/app/[locale]/me/listings/page.tsx",
+      "line": 148,
+      "element": "<Button data-testid=\"first-listing-button\" asChild size=\"lg\" variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/me/listings/page.tsx-7",
+      "file": "src/app/[locale]/me/listings/page.tsx",
+      "line": 213,
+      "element": "<Button data-testid=\"edit-listing-button\" asChild variant=\"ghost\" size=\"sm\">",
+      "type": "link-button",
+      "variant": "ghost",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/me/listings/page.tsx-8",
+      "file": "src/app/[locale]/me/listings/page.tsx",
+      "line": 213,
+      "element": "<Button data-testid=\"edit-listing-button\" asChild variant=\"ghost\" size=\"sm\">",
+      "type": "link-button",
+      "variant": "ghost",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/me/listings/page.tsx-9",
+      "file": "src/app/[locale]/me/listings/page.tsx",
+      "line": 219,
+      "element": "<Button data-testid=\"delete-listing-button\" variant=\"danger\" size=\"sm\">",
+      "type": "Button",
+      "variant": "danger",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/messages/[id]/page.tsx-1",
+      "file": "src/app/[locale]/messages/[id]/page.tsx",
+      "line": 188,
+      "element": "<Button data-testid=\"back-to-messages-button\" asChild variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/messages/[id]/page.tsx-2",
+      "file": "src/app/[locale]/messages/[id]/page.tsx",
+      "line": 188,
+      "element": "<Button data-testid=\"back-to-messages-button\" asChild variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/messages/[id]/page.tsx-3",
+      "file": "src/app/[locale]/messages/[id]/page.tsx",
+      "line": 213,
+      "element": "<Button data-testid=\"back-button\" variant=\"ghost\" asChild >",
+      "type": "link-button",
+      "variant": "ghost",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/messages/[id]/page.tsx-4",
+      "file": "src/app/[locale]/messages/[id]/page.tsx",
+      "line": 213,
+      "element": "<Button data-testid=\"back-button\" variant=\"ghost\" asChild >",
+      "type": "link-button",
+      "variant": "ghost",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/messages/page.tsx-1",
+      "file": "src/app/[locale]/messages/page.tsx",
+      "line": 101,
+      "element": "<Button asChild size=\"lg\" variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/messages/page.tsx-2",
+      "file": "src/app/[locale]/messages/page.tsx",
+      "line": 101,
+      "element": "<Button asChild size=\"lg\" variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/messages/page.tsx-3",
+      "file": "src/app/[locale]/messages/page.tsx",
+      "line": 141,
+      "element": "<Button asChild size=\"lg\" variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/messages/page.tsx-4",
+      "file": "src/app/[locale]/messages/page.tsx",
+      "line": 141,
+      "element": "<Button asChild size=\"lg\" variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/new-listing/page.tsx-1",
+      "file": "src/app/[locale]/new-listing/page.tsx",
+      "line": 91,
+      "element": "<Button variant=\"ghost\" asChild className=\"mb-4\">",
+      "type": "link-button",
+      "variant": "ghost",
+      "className": "mb-4",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/new-listing/page.tsx-2",
+      "file": "src/app/[locale]/new-listing/page.tsx",
+      "line": 91,
+      "element": "<Button variant=\"ghost\" asChild className=\"mb-4\">",
+      "type": "link-button",
+      "variant": "ghost",
+      "className": "mb-4",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/user/[id]/page.tsx-1",
+      "file": "src/app/[locale]/user/[id]/page.tsx",
+      "line": 114,
+      "element": "<Button asChild variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/user/[id]/page.tsx-2",
+      "file": "src/app/[locale]/user/[id]/page.tsx",
+      "line": 114,
+      "element": "<Button asChild variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    },
+    {
+      "id": "btn-src/app/[locale]/user/[id]/page.tsx-3",
+      "file": "src/app/[locale]/user/[id]/page.tsx",
+      "line": 252,
+      "element": "<button className=\"btn btn-outline\">",
+      "type": "button",
+      "className": "btn btn-outline",
+      "issues": [
+        {
+          "type": "standardization",
+          "severity": "medium",
+          "message": "標準Buttonコンポーネントが使用されていません",
+          "suggestion": "@/components/ui/buttonのButtonコンポーネントを使用してください"
+        }
+      ]
+    },
+    {
+      "id": "btn-src/components/Header.tsx-1",
+      "file": "src/components/Header.tsx",
+      "line": 38,
+      "element": "<button onClick={signOut} className=\"btn btn-secondary\">",
+      "type": "button",
+      "className": "btn btn-secondary",
+      "issues": [
+        {
+          "type": "standardization",
+          "severity": "medium",
+          "message": "標準Buttonコンポーネントが使用されていません",
+          "suggestion": "@/components/ui/buttonのButtonコンポーネントを使用してください"
+        }
+      ]
+    },
+    {
+      "id": "btn-src/components/ListingGrid.tsx-1",
+      "file": "src/components/ListingGrid.tsx",
+      "line": 103,
+      "element": "<Button asChild variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    },
+    {
+      "id": "btn-src/components/ListingGrid.tsx-2",
+      "file": "src/components/ListingGrid.tsx",
+      "line": 103,
+      "element": "<Button asChild variant=\"primary\">",
+      "type": "link-button",
+      "variant": "primary",
+      "issues": []
+    }
+  ]
+}

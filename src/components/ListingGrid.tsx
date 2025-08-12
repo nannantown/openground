@@ -10,6 +10,7 @@ import { FavouriteButton } from '@/components/FavouriteButton'
 import { Search, Plus, Loader2, Grid3X3, List } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { useViewMode } from '@/hooks/useViewMode'
 import type { Listing } from '@/shared/types'
 
 export function ListingGrid() {
@@ -18,6 +19,7 @@ export function ListingGrid() {
   const t = useTranslations('listings')
   const tSearch = useTranslations('search')
   const tCommon = useTranslations('common')
+  const { viewMode, setViewMode } = useViewMode()
   
   // Get search query for display
   const searchQuery = searchParams.get('q') || ''
@@ -98,7 +100,7 @@ export function ListingGrid() {
             : t('noListingsDesc')
           }
         </p>
-        <Button asChild className="bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+        <Button asChild variant="primary">
           <Link href="/new-listing">
             <Plus className="w-4 h-4 mr-2" />
             {t('postFirst')}
@@ -132,64 +134,130 @@ export function ListingGrid() {
         <h2 className="text-2xl font-semibold">
           {(searchQuery || categoryFilter) ? tSearch('searchResults') : t('title')}
         </h2>
-        <div className="flex gap-2">
-          <Button variant="ghost" size="sm">
+        <div className="flex gap-2" data-testid="view-toggle">
+          <Button 
+            variant={viewMode === 'grid' ? 'primary' : 'ghost'} 
+            size="sm"
+            onClick={() => setViewMode('grid')}
+            data-testid="grid-view-button"
+          >
             <Grid3X3 className="w-4 h-4 mr-2" />
             Grid
           </Button>
-          <Button variant="ghost" size="sm">
+          <Button 
+            variant={viewMode === 'list' ? 'primary' : 'ghost'} 
+            size="sm"
+            onClick={() => setViewMode('list')}
+            data-testid="list-view-button"
+          >
             <List className="w-4 h-4 mr-2" />
             List
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {listings.map((listing) => (
-          <Card key={listing.id} data-testid="listing-card" className="overflow-hidden">
-            <div className="relative h-48 overflow-hidden">
-              <Link href={`/listing/${listing.id}`} className="block">
-                {firstImage(listing) ? (
-                  <Image
-                    src={firstImage(listing)}
-                    alt={listing.title}
-                    fill
-                    className="object-cover transition-transform hover:scale-105"
-                  />
-                ) : (
-                  <div className="w-full h-48 bg-muted flex items-center justify-center">
-                    <span className="text-muted-foreground text-sm">No Image</span>
-                  </div>
-                )}
-              </Link>
-              <div className="absolute top-2 right-2">
-                <FavouriteButton listingId={listing.id} />
-              </div>
-            </div>
-            
-            <CardContent className="p-4">
-              <Link href={`/listing/${listing.id}`} className="block">
-                <h3 className="font-semibold mb-2 line-clamp-2 hover:text-primary">{listing.title}</h3>
-                <p className="text-lg font-bold text-primary mb-2">
-                  {formatPrice(listing.price)}
-                </p>
-                {listing.description && (
-                  <p className="text-sm text-muted-foreground mb-3">
-                    {listing.description.slice(0, 80)}
-                    {listing.description.length > 80 ? '...' : ''}
-                  </p>
-                )}
-                
-                <div className="flex justify-between items-center">
-                  <span className="text-xs text-muted-foreground">
-                    {new Date(listing.created_at).toLocaleDateString()}
-                  </span>
+      {viewMode === 'grid' ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" data-testid="grid-view">
+          {listings.map((listing) => (
+            <Card key={listing.id} data-testid="listing-card" className="overflow-hidden">
+              <div className="relative h-48 overflow-hidden">
+                <Link href={`/listing/${listing.id}`} className="block">
+                  {firstImage(listing) ? (
+                    <Image
+                      src={firstImage(listing)}
+                      alt={listing.title}
+                      fill
+                      className="object-cover transition-transform hover:scale-105"
+                    />
+                  ) : (
+                    <div className="w-full h-48 bg-muted flex items-center justify-center">
+                      <span className="text-muted-foreground text-sm">No Image</span>
+                    </div>
+                  )}
+                </Link>
+                <div className="absolute top-2 right-2">
+                  <FavouriteButton listingId={listing.id} />
                 </div>
-              </Link>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+              </div>
+              
+              <CardContent className="p-4">
+                <Link href={`/listing/${listing.id}`} className="block">
+                  <h3 className="font-semibold mb-2 line-clamp-2 hover:text-primary">{listing.title}</h3>
+                  <p className="text-lg font-bold text-primary mb-2">
+                    {formatPrice(listing.price)}
+                  </p>
+                  {listing.description && (
+                    <p className="text-sm text-muted-foreground mb-3">
+                      {listing.description.slice(0, 80)}
+                      {listing.description.length > 80 ? '...' : ''}
+                    </p>
+                  )}
+                  
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(listing.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                </Link>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-4" data-testid="list-view">
+          {listings.map((listing) => (
+            <Card key={listing.id} data-testid="listing-card" className="overflow-hidden">
+              <div className="flex">
+                <div className="relative w-48 h-32 overflow-hidden flex-shrink-0">
+                  <Link href={`/listing/${listing.id}`} className="block">
+                    {firstImage(listing) ? (
+                      <Image
+                        src={firstImage(listing)}
+                        alt={listing.title}
+                        fill
+                        className="object-cover transition-transform hover:scale-105"
+                      />
+                    ) : (
+                      <div className="w-full h-32 bg-muted flex items-center justify-center">
+                        <span className="text-muted-foreground text-sm">No Image</span>
+                      </div>
+                    )}
+                  </Link>
+                </div>
+                
+                <CardContent className="flex-1 p-4">
+                  <div className="flex justify-between items-start h-full">
+                    <div className="flex-1">
+                      <Link href={`/listing/${listing.id}`} className="block">
+                        <h3 className="font-semibold mb-2 hover:text-primary">{listing.title}</h3>
+                        <p className="text-lg font-bold text-primary mb-2">
+                          {formatPrice(listing.price)}
+                        </p>
+                        {listing.description && (
+                          <p className="text-sm text-muted-foreground mb-3">
+                            {listing.description.slice(0, 150)}
+                            {listing.description.length > 150 ? '...' : ''}
+                          </p>
+                        )}
+                        
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs text-muted-foreground">
+                            {new Date(listing.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </Link>
+                    </div>
+                    
+                    <div className="ml-4 flex-shrink-0">
+                      <FavouriteButton listingId={listing.id} />
+                    </div>
+                  </div>
+                </CardContent>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

@@ -10,7 +10,8 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowLeft, Plus, Upload } from 'lucide-react'
+import { ImageUpload } from '@/components/ImageUpload'
+import { ArrowLeft, Plus } from 'lucide-react'
 import Link from 'next/link'
 
 const categories = ['Electronics', 'Home', 'Vehicles', 'Jobs', 'Fashion', 'Books', 'Sports', 'Other']
@@ -32,7 +33,8 @@ export default function NewListingPage() {
     price: '',
     category: '',
     condition: 'good',
-    address: ''
+    address: '',
+    images: [] as string[]
   })
 
   if (!user) {
@@ -56,7 +58,8 @@ export default function NewListingPage() {
           price: formData.price ? parseFloat(formData.price) : null,
           category: formData.category,
           condition: formData.condition,
-          location: formData.address
+          location: formData.address,
+          images: formData.images
         }),
       })
 
@@ -74,7 +77,7 @@ export default function NewListingPage() {
     }
   }
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: string | string[]) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
@@ -196,25 +199,12 @@ export default function NewListingPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>商品画像</Label>
-                  <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
-                    <Upload className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                    <p className="text-sm text-muted-foreground mb-2">
-                      画像をアップロード (最大5枚)
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      JPG, PNG, WEBP形式に対応
-                    </p>
-                    <Button 
-                      data-testid="image-upload-button"
-                      type="button" 
-                      variant="outline" 
-                      className="mt-4 border-gray-300 text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400" 
-                      disabled
-                    >
-                      ファイルを選択 (開発中)
-                    </Button>
-                  </div>
+                  <Label>{t('imagesLabel')}</Label>
+                  <ImageUpload
+                    value={formData.images}
+                    onChange={(urls) => handleInputChange('images', urls)}
+                    maxFiles={5}
+                  />
                 </div>
 
                 <div className="flex gap-4 pt-6">
@@ -231,7 +221,7 @@ export default function NewListingPage() {
                     data-testid="submit-button"
                     type="submit" 
                     disabled={loading || !formData.title || !formData.category}
-                    className="flex-1 bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-300 disabled:text-gray-500"
+                    variant="primary"
                   >
                     {loading ? '投稿中...' : '商品を投稿する'}
                   </Button>

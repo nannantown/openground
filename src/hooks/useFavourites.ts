@@ -8,7 +8,7 @@ export function useFavourites() {
   const queryClient = useQueryClient()
 
   // Get user's favourite listing IDs
-  const { data: favouriteIds = [], isLoading } = useQuery({
+  const { data: favouriteIds = [], isLoading } = useQuery<string[]>({
     queryKey: ['favourites'],
     queryFn: async () => {
       const response = await fetch('/api/v1/favourites')
@@ -19,7 +19,8 @@ export function useFavourites() {
       return response.json() as Promise<string[]>
     },
     enabled: !!user,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 1 * 60 * 1000, // 1 minute - reduced for better sync
+    gcTime: 10 * 60 * 1000, // 10 minutes cache
   })
 
   // Add to favourites
@@ -41,6 +42,25 @@ export function useFavourites() {
       
       return response.json()
     },
+    // Optimistic update
+    onMutate: async (listingId) => {
+      await queryClient.cancelQueries({ queryKey: ['favourites'] })
+      const previousFavourites = queryClient.getQueryData(['favourites'])
+      
+      queryClient.setQueryData(['favourites'], (old: string[] = []) => {
+        if (!old.includes(listingId)) {
+          return [...old, listingId]
+        }
+        return old
+      })
+      
+      return { previousFavourites }
+    },
+    onError: (err, listingId, context) => {
+      if (context?.previousFavourites) {
+        queryClient.setQueryData(['favourites'], context.previousFavourites)
+      }
+    },
     onSuccess: (_, listingId) => {
       // Update the favourites list
       queryClient.setQueryData(['favourites'], (old: string[] = []) => {
@@ -50,8 +70,9 @@ export function useFavourites() {
         return old
       })
       
-      // Also invalidate the full favourites data to refresh the favourites page
+      // Invalidate all related queries to ensure UI consistency
       queryClient.invalidateQueries({ queryKey: ['favourites-full'] })
+      queryClient.invalidateQueries({ queryKey: ['listings'] }) // Update main listings page
     },
   })
 
@@ -70,14 +91,31 @@ export function useFavourites() {
       
       return response.json()
     },
+    // Optimistic update
+    onMutate: async (listingId) => {
+      await queryClient.cancelQueries({ queryKey: ['favourites'] })
+      const previousFavourites = queryClient.getQueryData(['favourites'])
+      
+      queryClient.setQueryData(['favourites'], (old: string[] = []) => {
+        return old.filter(id => id !== listingId)
+      })
+      
+      return { previousFavourites }
+    },
+    onError: (err, listingId, context) => {
+      if (context?.previousFavourites) {
+        queryClient.setQueryData(['favourites'], context.previousFavourites)
+      }
+    },
     onSuccess: (_, listingId) => {
       // Update the favourites list
       queryClient.setQueryData(['favourites'], (old: string[] = []) => {
         return old.filter(id => id !== listingId)
       })
       
-      // Also invalidate the favourites page data if it exists
+      // Invalidate all related queries to ensure UI consistency
       queryClient.invalidateQueries({ queryKey: ['favourites-full'] })
+      queryClient.invalidateQueries({ queryKey: ['listings'] }) // Update main listings page
     },
   })
 

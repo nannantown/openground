@@ -185,7 +185,7 @@ export default function ChatPage() {
             <p className="text-gray-600 mb-6">
               このチャットは削除されたか、存在しません
             </p>
-            <Button data-testid="back-to-messages-button" asChild className="bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+            <Button data-testid="back-to-messages-button" asChild variant="primary">
               <Link href="/messages">
                 <MessageCircle className="w-4 h-4 mr-2" />
                 メッセージ一覧に戻る
@@ -210,7 +210,7 @@ export default function ChatPage() {
       <div className="bg-white border-b shadow-sm">
         <div className="container">
           <div className="flex items-center gap-4 py-4">
-            <Button data-testid="back-button" variant="ghost" asChild className="text-gray-700 hover:bg-gray-100 hover:text-gray-900">
+            <Button data-testid="back-button" variant="ghost" asChild >
               <Link href="/messages">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 戻る
@@ -362,7 +362,7 @@ export default function ChatPage() {
               data-testid="send-message-button"
               type="submit"
               disabled={!message.trim() || isLoading || sendMessageMutation.isPending}
-              className="rounded-full px-6 bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-300 disabled:text-gray-500"
+              variant="primary"
             >
               {sendMessageMutation.isPending ? (
                 '送信中...'

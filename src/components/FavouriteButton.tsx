@@ -52,15 +52,11 @@ export function FavouriteButton({ listingId, className = '' }: FavouriteButtonPr
       data-testid="favourite-button"
       onClick={handleClick}
       disabled={isToggling}
-      variant="outline"
+      variant={isFavourite ? "danger" : "outline"}
       size="icon"
       className={`
         relative w-10 h-10 rounded-full
         transition-all duration-200 ease-in-out
-        ${isFavourite 
-          ? 'bg-red-500 text-white hover:bg-red-600 border-red-500' 
-          : 'bg-white text-gray-700 hover:bg-red-50 hover:text-red-500 border-gray-300'
-        }
         ${isAnimating ? 'scale-110' : 'hover:scale-105'}
         ${className}
       `}

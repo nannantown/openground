@@ -96,7 +96,11 @@
     "resultsFound": "{count} items found",
     "searchResults": "Search Results",
     "keyword": "Keyword: \"{query}\"",
-    "noLimit": "No limit"
+    "noLimit": "No limit",
+    "locationSet": "Location set",
+    "gettingLocation": "Getting location...",
+    "locationNotSupported": "Location is not supported by this browser",
+    "locationError": "Failed to get location. Please try again."
   },
   "newListing": {
     "title": "Post New Item",
@@ -127,5 +131,50 @@
     "postItem": "Post Item",
     "postSuccess": "Item posted successfully!",
     "postError": "Failed to post item. Please try again."
+  },
+  "editListing": {
+    "title": "Edit Listing",
+    "subtitle": "Update your item information",
+    "backToListing": "Back to Listing",
+    "backToListings": "Back to My Listings",
+    "editDetails": "Edit Details",
+    "titleLabel": "Item Title *",
+    "titlePlaceholder": "e.g. iPhone 15 Pro Max 256GB",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Please describe the condition, usage period, accessories, etc. in detail",
+    "priceLabel": "Price (¥)",
+    "priceNote": "Leave blank to display as 'Contact for price'",
+    "categoryLabel": "Category *",
+    "selectCategory": "Select category",
+    "conditionLabel": "Condition *",
+    "conditionNew": "New",
+    "conditionExcellent": "Excellent",
+    "conditionGood": "Good",
+    "conditionFair": "Fair",
+    "conditionPoor": "Poor",
+    "locationLabel": "Location",
+    "locationPlaceholder": "e.g. Tokyo, Shibuya",
+    "imagesLabel": "Images",
+    "updating": "Updating...",
+    "updateButton": "Update Listing",
+    "updateFailed": "Failed to update listing. Please try again.",
+    "listingNotFound": "Listing Not Found",
+    "listingNotFoundDesc": "This listing may have been deleted or does not exist",
+    "accessDenied": "Access Denied",
+    "accessDeniedDesc": "You don't have permission to edit this listing"
+  },
+  "imageUpload": {
+    "dragDropFiles": "Drag and drop images here, or click to select",
+    "dropFiles": "Drop files here",
+    "supportedFormats": "JPG, PNG, WEBP formats supported",
+    "maxFiles": "{count} more files allowed",
+    "selectFiles": "Select Files",
+    "uploading": "Uploading...",
+    "uploadError": "Failed to upload image. Please try again.",
+    "maxFilesError": "Maximum {max} files allowed",
+    "imagePreview": "Image {index}",
+    "mainImage": "Main",
+    "addMore": "Add More",
+    "removeImage": "Remove image"
   }
 }

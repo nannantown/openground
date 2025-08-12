@@ -3,6 +3,7 @@
 import { useSupabase } from '@/app/[locale]/providers'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState, Suspense } from 'react'
+import { Clock, CheckCircle, XCircle } from 'lucide-react'
 
 // Force dynamic rendering for this page
 export const dynamic = 'force-dynamic'
@@ -67,7 +68,7 @@ function AuthContent() {
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           {status === 'loading' && (
             <div className="text-center">
-              <div className="text-6xl mb-4">⏳</div>
+              <Clock className="w-16 h-16 mx-auto mb-4 text-blue-500" />
               <h2 className="text-xl font-semibold text-gray-900 mb-2">
                 認証を確認しています...
               </h2>
@@ -79,7 +80,7 @@ function AuthContent() {
 
           {status === 'success' && (
             <div className="text-center">
-              <div className="text-6xl mb-4">✅</div>
+              <CheckCircle className="w-16 h-16 mx-auto mb-4 text-green-500" />
               <h2 className="text-xl font-semibold text-gray-900 mb-2">
                 サインイン完了！
               </h2>
@@ -97,7 +98,7 @@ function AuthContent() {
 
           {status === 'error' && (
             <div className="text-center">
-              <div className="text-6xl mb-4">❌</div>
+              <XCircle className="w-16 h-16 mx-auto mb-4 text-red-500" />
               <h2 className="text-xl font-semibold text-gray-900 mb-2">
                 認証に失敗しました
               </h2>
@@ -125,7 +126,7 @@ export default function AuthPage() {
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="text-center">
-              <div className="text-6xl mb-4">⏳</div>
+              <Clock className="w-16 h-16 mx-auto mb-4 text-blue-500" />
               <h2 className="text-xl font-semibold text-gray-900 mb-2">
                 読み込み中...
               </h2>

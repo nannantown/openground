@@ -184,7 +184,7 @@ export default function LoginPage() {
                 data-testid="login-button"
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                variant="primary"
               >
                 {loading ? (
                   <>

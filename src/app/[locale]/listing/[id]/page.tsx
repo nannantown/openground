@@ -111,7 +111,7 @@ export default function ListingPage() {
             <p className="text-gray-600 mb-6">
               この商品は削除されたか、存在しません
             </p>
-            <Button data-testid="home-button" asChild className="bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+            <Button data-testid="home-button" asChild variant="primary">
               <Link href="/">
                 <Home className="w-4 h-4 mr-2" />
                 ホームに戻る
@@ -257,21 +257,21 @@ export default function ListingPage() {
                     <button
                       data-testid="contact-seller-button"
                       onClick={startChat}
-                      className="w-full bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 py-3 px-4 rounded-lg font-semibold transition-colors"
+                      variant="primary"
                     >
                       <MessageCircle className="w-4 h-4 mr-2" />
                       出品者にメッセージ
                     </button>
-                    <button data-testid="phone-contact-button" className="w-full border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 py-3 px-4 rounded-lg font-semibold transition-colors">
+                    <Button data-testid="phone-contact-button" variant="outline" className="w-full">
                       <Phone className="w-4 h-4 mr-2" />
                       電話で問い合わせ
-                    </button>
+                    </Button>
                   </div>
                 )}
 
                 {isOwner && (
                   <div className="space-y-3">
-                    <Link data-testid="edit-listing-button" href={`/listing/${listing.id}/edit`} className="w-full bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 py-3 px-4 rounded-lg font-semibold transition-colors inline-flex items-center justify-center">
+                    <Link data-testid="edit-listing-button" href={`/listing/${listing.id}/edit`} variant="primary">
                       <Edit className="w-4 h-4 mr-2" />
                       編集
                     </Link>
@@ -346,10 +346,10 @@ export default function ListingPage() {
 
               {/* Report */}
               <div className="bg-white rounded-lg shadow-sm p-6">
-                <button data-testid="report-button" className="w-full text-red-600 hover:bg-red-50 hover:text-red-700 py-2 px-3 rounded-md font-medium transition-colors">
+                <Button data-testid="report-button" variant="ghost" className="w-full text-red-600 hover:bg-red-50">
                   <AlertTriangle className="w-4 h-4 mr-2" />
                   この商品を報告
-                </button>
+                </Button>
               </div>
             </div>
           </div>

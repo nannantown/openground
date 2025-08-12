@@ -11,6 +11,9 @@ export async function GET(request: NextRequest) {
     const cat = searchParams.get('cat')
     const min = searchParams.get('min')
     const max = searchParams.get('max')
+    const lat = searchParams.get('lat')
+    const lng = searchParams.get('lng')
+    const radius = searchParams.get('r')
     
     // Build query
     let query = supabase
@@ -84,6 +87,34 @@ export async function GET(request: NextRequest) {
       }
     }
     
+    // Add location-based filtering using simple bounding box
+    if (lat && lng && radius) {
+      const latitude = parseFloat(lat)
+      const longitude = parseFloat(lng)
+      const radiusKm = parseFloat(radius)
+      
+      if (!isNaN(latitude) && !isNaN(longitude) && !isNaN(radiusKm)) {
+        // Calculate bounding box (approximate)
+        // 1 degree latitude ≈ 111 km
+        // 1 degree longitude ≈ 111 km * cos(latitude)
+        const latDelta = radiusKm / 111
+        const lngDelta = radiusKm / (111 * Math.cos(latitude * Math.PI / 180))
+        
+        const minLat = latitude - latDelta
+        const maxLat = latitude + latDelta
+        const minLng = longitude - lngDelta
+        const maxLng = longitude + lngDelta
+        
+        query = query
+          .filter('lat', 'not.is', null)
+          .filter('lng', 'not.is', null)
+          .gte('lat', minLat)
+          .lte('lat', maxLat)
+          .gte('lng', minLng)
+          .lte('lng', maxLng)
+      }
+    }
+    
     // Order by creation date
     query = query.order('created_at', { ascending: false })
 
@@ -112,11 +143,11 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { title, description, price, category, lat, lng, images = [] } = body
+    const { title, description, price, category, condition, location, lat, lng, images = [] } = body
 
     // Validate required fields
-    if (!title || !description) {
-      return NextResponse.json({ error: 'Title and description are required' }, { status: 400 })
+    if (!title || !category) {
+      return NextResponse.json({ error: 'Title and category are required' }, { status: 400 })
     }
 
     // Insert new listing
@@ -128,6 +159,8 @@ export async function POST(request: NextRequest) {
         description,
         price: price ? parseFloat(price) : null,
         category,
+        condition: condition || 'good',
+        location,
         lat: lat ? parseFloat(lat) : null,
         lng: lng ? parseFloat(lng) : null,
         images

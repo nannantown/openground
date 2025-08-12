@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import { MapPin, Search } from 'lucide-react'
+import { MapPin, Search, X, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
@@ -22,6 +22,12 @@ export function SearchForm() {
   const [min, setMin] = useState(searchParams.get('min') || '')
   const [max, setMax] = useState(searchParams.get('max') || '')
   const [radiusKm, setRadiusKm] = useState(searchParams.get('r') || '')
+  const [location, setLocation] = useState<{lat: number, lng: number} | null>(
+    searchParams.get('lat') && searchParams.get('lng') 
+      ? { lat: parseFloat(searchParams.get('lat')!), lng: parseFloat(searchParams.get('lng')!) }
+      : null
+  )
+  const [isGettingLocation, setIsGettingLocation] = useState(false)
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -32,19 +38,41 @@ export function SearchForm() {
     if (min) params.set('min', min)
     if (max) params.set('max', max)
     if (radiusKm) params.set('r', radiusKm)
+    if (location) {
+      params.set('lat', location.lat.toString())
+      params.set('lng', location.lng.toString())
+    }
     
     router.push(`/?${params.toString()}`)
   }
   
   const useCurrentLocation = () => {
-    if (!navigator.geolocation) return
+    if (!navigator.geolocation) {
+      alert(t('locationNotSupported') || '位置情報がサポートされていません')
+      return
+    }
     
-    navigator.geolocation.getCurrentPosition((pos) => {
-      const params = new URLSearchParams(searchParams)
-      params.set('lat', pos.coords.latitude.toString())
-      params.set('lng', pos.coords.longitude.toString())
-      router.push(`/?${params.toString()}`)
-    })
+    setIsGettingLocation(true)
+    
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setLocation({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude
+        })
+        setIsGettingLocation(false)
+      },
+      (error) => {
+        console.error('Location error:', error)
+        alert(t('locationError') || '位置情報の取得に失敗しました')
+        setIsGettingLocation(false)
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000 // 5 minutes
+      }
+    )
   }
 
   return (
@@ -114,16 +142,46 @@ export function SearchForm() {
               />
             </div>
             <div className="flex flex-col justify-end">
-              <Button
-                data-testid="location-button"
-                type="button"
-                variant="outline"
-                onClick={useCurrentLocation}
-                className="w-full border-gray-300 text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400"
-              >
-                <MapPin className="w-4 h-4 mr-2" />
-                {t('useLocation')}
-              </Button>
+              {location ? (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-md p-2">
+                    <div className="flex items-center text-sm text-green-700">
+                      <MapPin className="w-4 h-4 mr-1" />
+                      {t('locationSet') || '位置情報設定済み'}
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setLocation(null)}
+                      className="h-6 w-6 p-0 text-green-600 hover:text-green-800"
+                    >
+                      <X className="w-3 h-3" />
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <Button
+                  data-testid="location-button"
+                  type="button"
+                  variant="outline"
+                  onClick={useCurrentLocation}
+                  disabled={isGettingLocation}
+                  className="w-full border-gray-300 text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 disabled:opacity-50"
+                >
+                  {isGettingLocation ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      {t('gettingLocation') || '位置情報取得中...'}
+                    </>
+                  ) : (
+                    <>
+                      <MapPin className="w-4 h-4 mr-2" />
+                      {t('useLocation')}
+                    </>
+                  )}
+                </Button>
+              )}
             </div>
           </div>
 
@@ -132,7 +190,7 @@ export function SearchForm() {
               data-testid="search-button" 
               type="submit" 
               size="lg" 
-              className="px-12 bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              variant="primary"
             >
               <Search className="w-4 h-4 mr-2" />
               {t('searchButton')}

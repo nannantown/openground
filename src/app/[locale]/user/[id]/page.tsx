@@ -111,7 +111,7 @@ export default function UserProfilePage() {
             <p className="text-gray-600 mb-6">
               このユーザーは存在しません
             </p>
-            <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button asChild variant="primary">
               <Link href="/">
                 <Home className="w-4 h-4 mr-2" />
                 ホームに戻る

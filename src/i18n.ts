@@ -1,8 +1,18 @@
 import {notFound} from 'next/navigation';
 import {getRequestConfig} from 'next-intl/server';
 
+// Import messages directly to avoid dynamic import issues
+import enMessages from '../messages/en.json';
+import jaMessages from '../messages/ja.json';
+
 // Can be imported from a shared config
 const locales = ['en', 'ja'];
+
+// Message map for static imports
+const messages = {
+  en: enMessages,
+  ja: jaMessages,
+} as const;
 
 export default getRequestConfig(async ({requestLocale}) => {
   // This typically corresponds to the `[locale]` segment
@@ -15,6 +25,6 @@ export default getRequestConfig(async ({requestLocale}) => {
 
   return {
     locale,
-    messages: (await import(`../messages/${locale}.json`)).default
+    messages: messages[locale as keyof typeof messages]
   };
 });

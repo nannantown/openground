@@ -38,8 +38,8 @@ export default function MyListingsPage() {
   })
 
   const formatPrice = (price?: number | null) => {
-    if (price == null) return '価格相談'
-    return new Intl.NumberFormat('ja-JP', { 
+    if (price == null) return tListings('contactPrice')
+    return new Intl.NumberFormat(undefined, { 
       style: 'currency', 
       currency: 'JPY' 
     }).format(Number(price))
@@ -51,7 +51,7 @@ export default function MyListingsPage() {
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('ja-JP', { 
+    return new Date(dateString).toLocaleDateString(undefined, { 
       month: 'short', 
       day: 'numeric', 
       year: 'numeric' 
@@ -65,7 +65,7 @@ export default function MyListingsPage() {
         <div className="container py-16">
           <div className="text-center">
             <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4" />
-            <p>読み込み中...</p>
+            <p>{tCommon('loading')}</p>
           </div>
         </div>
       </div>
@@ -79,14 +79,14 @@ export default function MyListingsPage() {
         <div className="container py-16">
           <div className="max-w-md mx-auto text-center bg-white p-8 rounded-lg shadow-md">
             <Lock className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-            <h2 className="text-2xl font-semibold mb-4">サインインが必要です</h2>
+            <h2 className="text-2xl font-semibold mb-4">{tAuth('signInRequired')}</h2>
             <p className="text-gray-600 mb-6">
-              マイリスト機能を使用するには、アカウントにサインインしてください
+              {tAuth('signInDesc')}
             </p>
-            <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button asChild size="lg" variant="primary">
               <Link href="/login">
                 <Key className="w-4 h-4 mr-2" />
-                サインイン
+                {tAuth('signIn')}
               </Link>
             </Button>
           </div>
@@ -107,15 +107,15 @@ export default function MyListingsPage() {
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 mb-2">
                   <FileText className="w-4 h-4 mr-2" />
-                  マイリスト
+                  {t('title')}
                 </h1>
-                <p className="text-gray-600">あなたが投稿した商品一覧</p>
+                <p className="text-gray-600">{t('subtitle')}</p>
               </div>
               <div className="flex gap-3">
-                <Button data-testid="new-listing-button" asChild className="bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                <Button data-testid="new-listing-button" asChild variant="primary">
                   <Link href="/new-listing">
                     <Plus className="w-4 h-4 mr-2" />
-                    新しい商品を投稿
+                    {tListings('newListing')}
                   </Link>
                 </Button>
               </div>
@@ -123,7 +123,7 @@ export default function MyListingsPage() {
             {listings.length > 0 && (
               <div className="mt-4">
                 <div className="bg-blue-50 text-blue-800 px-4 py-2 rounded-full text-sm font-medium inline-block">
-                  {listings.length} 件の商品を投稿済み
+                  {t('itemsPosted', { count: listings.length })}
                 </div>
               </div>
             )}
@@ -133,7 +133,7 @@ export default function MyListingsPage() {
           {isLoading && (
             <div className="text-center py-16">
               <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4" />
-              <p>リストを読み込み中...</p>
+              <p>{t('loading')}</p>
             </div>
           )}
 
@@ -141,14 +141,14 @@ export default function MyListingsPage() {
           {!isLoading && listings.length === 0 && (
             <div className="text-center py-16">
               <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-              <h2 className="text-xl font-semibold mb-2">まだ商品を投稿していません</h2>
+              <h2 className="text-xl font-semibold mb-2">{t('noListings')}</h2>
               <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                不要になった商品や売りたい商品がある場合は、商品を投稿してみましょう
+                {t('noListingsDesc')}
               </p>
-              <Button data-testid="first-listing-button" asChild size="lg" className="bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+              <Button data-testid="first-listing-button" asChild size="lg" variant="primary">
                 <Link href="/new-listing">
                   <Plus className="w-4 h-4 mr-2" />
-                  初回商品投稿
+                  {t('postFirst')}
                 </Link>
               </Button>
             </div>
@@ -176,7 +176,7 @@ export default function MyListingsPage() {
                     {/* Status Badge */}
                     <div className="absolute top-2 left-2">
                       <span className="bg-green-500 text-white px-2 py-1 rounded-md text-xs font-medium">
-                        公開中
+                        Active
                       </span>
                     </div>
                   </div>
@@ -210,15 +210,15 @@ export default function MyListingsPage() {
                     
                     {/* Action Buttons */}
                     <div className="mt-4 flex gap-2">
-                      <Button data-testid="edit-listing-button" asChild variant="ghost" size="sm" className="flex-1 text-gray-700 hover:bg-gray-100 hover:text-gray-900">
+                      <Button data-testid="edit-listing-button" asChild variant="ghost" size="sm">
                         <Link href={`/listing/${listing.id}/edit`}>
                           <Edit className="w-4 h-4 mr-2" />
-                          編集
+                          {tListings('edit')}
                         </Link>
                       </Button>
-                      <Button data-testid="delete-listing-button" variant="ghost" size="sm" className="text-red-600 hover:bg-red-100 hover:text-red-700 border-red-300 hover:border-red-400">
+                      <Button data-testid="delete-listing-button" variant="danger" size="sm">
                         <Trash2 className="w-4 h-4 mr-2" />
-                        削除
+                        {tListings('delete')}
                       </Button>
                     </div>
                   </div>

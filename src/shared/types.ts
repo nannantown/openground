@@ -16,6 +16,8 @@ export type Listing = {
   description: string | null
   price: number | null
   category: string | null
+  condition: string | null
+  location: string | null
   lat: number | null
   lng: number | null
   images: string[]

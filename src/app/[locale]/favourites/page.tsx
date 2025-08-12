@@ -3,6 +3,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '@/hooks/useAuth'
 import { useSupabase } from '@/app/[locale]/providers'
+import { useFavourites } from '@/hooks/useFavourites'
 import { useTranslations } from 'next-intl'
 import { Header } from '@/components/Header'
 import Link from 'next/link'
@@ -17,6 +18,7 @@ export default function FavouritesPage() {
   const { user, isLoading: authLoading } = useAuth()
   const supabase = useSupabase()
   const router = useRouter()
+  const { toggleFavourite, isToggling } = useFavourites()
   const t = useTranslations('favourites')
   const tAuth = useTranslations('auth')
   const tCommon = useTranslations('common')
@@ -42,19 +44,11 @@ export default function FavouritesPage() {
     if (!user) return
     
     try {
-      const response = await fetch(`/api/v1/favourites/${listingId}`, {
-        method: 'DELETE',
-      })
-      
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || 'Failed to remove favourite')
-      }
-      
-      await refetch()
+      // Use the centralized toggleFavourite function for proper cache management
+      await toggleFavourite(listingId)
     } catch (error) {
       console.error('Error removing favourite:', error)
-      alert(t('removeFailed') || 'お気に入りの削除に失敗しました。もう一度お試しください。')
+      alert(t('removeFailed'))
     }
   }
 
@@ -104,7 +98,7 @@ export default function FavouritesPage() {
             <p className="text-gray-600 mb-6">
               {tAuth('signInDesc')}
             </p>
-            <Button data-testid="login-button" asChild size="lg" className="bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+            <Button data-testid="login-button" asChild size="lg" variant="primary">
               <Link href="/login">
                 <Key className="w-4 h-4 mr-2" />
                 {tAuth('signIn')}
@@ -156,7 +150,7 @@ export default function FavouritesPage() {
               <p className="text-gray-600 mb-6 max-w-md mx-auto">
                 {t('noFavouritesDesc')}
               </p>
-              <Button data-testid="browse-listings-button" asChild size="lg" className="bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+              <Button data-testid="browse-listings-button" asChild size="lg" variant="primary">
                 <Link href="/">
                   <Home className="w-4 h-4 mr-2" />
                   {t('browse')}

@@ -98,7 +98,7 @@ export default function MessagesPage() {
             <p className="text-gray-600 mb-6">
               メッセージ機能を使用するには、アカウントにサインインしてください
             </p>
-            <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button asChild size="lg" variant="primary">
               <Link href="/login">
                 <Key className="w-4 h-4 mr-2" />
                 サインイン
@@ -138,7 +138,7 @@ export default function MessagesPage() {
               <p className="text-gray-600 mb-6 max-w-md mx-auto">
                 商品ページで「出品者にメッセージ」ボタンを押すと、出品者とのやり取りが始まります
               </p>
-              <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
+              <Button asChild size="lg" variant="primary">
                 <Link href="/">
                   <Home className="w-4 h-4 mr-2" />
                   商品を探す

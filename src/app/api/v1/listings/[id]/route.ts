@@ -66,7 +66,7 @@ export async function PUT(
     }
 
     const body = await request.json()
-    const { title, description, price, category, lat, lng, images, status } = body
+    const { title, description, price, category, condition, location, lat, lng, images, status } = body
 
     // Update listing (only if user is owner)
     const { data: listing, error } = await supabase
@@ -76,6 +76,8 @@ export async function PUT(
         ...(description !== undefined && { description }),
         ...(price !== undefined && { price: price ? parseFloat(price) : null }),
         ...(category && { category }),
+        ...(condition && { condition }),
+        ...(location !== undefined && { location }),
         ...(lat !== undefined && { lat: lat ? parseFloat(lat) : null }),
         ...(lng !== undefined && { lng: lng ? parseFloat(lng) : null }),
         ...(images && { images }),
