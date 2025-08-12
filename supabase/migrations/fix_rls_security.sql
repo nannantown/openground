@@ -19,9 +19,37 @@ EXCEPTION
 END $$;
 
 -- Update existing tables to use enum types (if they're currently text)
--- Note: This is safe because it only affects future inserts, existing data remains unchanged
-ALTER TABLE public.listings ALTER COLUMN status TYPE listing_status USING status::listing_status;
-ALTER TABLE public.threads ALTER COLUMN status TYPE thread_status USING status::thread_status;
+-- Only update if tables exist and columns are currently text type
+DO $$
+BEGIN
+    -- Update listings table status column if it exists and is text
+    IF EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'listings' 
+        AND column_name = 'status' 
+        AND data_type = 'text'
+        AND table_schema = 'public'
+    ) THEN
+        ALTER TABLE public.listings ALTER COLUMN status DROP DEFAULT;
+        ALTER TABLE public.listings ALTER COLUMN status TYPE listing_status USING status::listing_status;
+        ALTER TABLE public.listings ALTER COLUMN status SET DEFAULT 'active'::listing_status;
+        RAISE NOTICE 'Updated listings.status column to use listing_status enum';
+    END IF;
+
+    -- Update threads table status column if it exists and is text
+    IF EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'threads' 
+        AND column_name = 'status' 
+        AND data_type = 'text'
+        AND table_schema = 'public'
+    ) THEN
+        ALTER TABLE public.threads ALTER COLUMN status DROP DEFAULT;
+        ALTER TABLE public.threads ALTER COLUMN status TYPE thread_status USING status::thread_status;
+        ALTER TABLE public.threads ALTER COLUMN status SET DEFAULT 'open'::thread_status;
+        RAISE NOTICE 'Updated threads.status column to use thread_status enum';
+    END IF;
+END $$;
 
 -- ==============================================
 -- 1. Fix spatial_ref_sys table RLS issue
@@ -78,8 +106,14 @@ USING (true);
 -- ==============================================
 -- Ensure other tables have proper RLS if they don't already
 
--- Check and enable RLS on listings table
-ALTER TABLE public.listings ENABLE ROW LEVEL SECURITY;
+-- Check and enable RLS on listings table (only if table exists)
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'listings' AND table_schema = 'public') THEN
+        ALTER TABLE public.listings ENABLE ROW LEVEL SECURITY;
+        RAISE NOTICE 'Enabled RLS on listings table';
+    END IF;
+END $$;
 
 -- Listings policies
 DROP POLICY IF EXISTS "Anyone can view active listings" ON public.listings;
@@ -108,8 +142,14 @@ ON public.listings FOR DELETE
 TO authenticated 
 USING (auth.uid() = owner_id);
 
--- Enable RLS on favourites table
-ALTER TABLE public.favourites ENABLE ROW LEVEL SECURITY;
+-- Enable RLS on favourites table (only if table exists)
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'favourites' AND table_schema = 'public') THEN
+        ALTER TABLE public.favourites ENABLE ROW LEVEL SECURITY;
+        RAISE NOTICE 'Enabled RLS on favourites table';
+    END IF;
+END $$;
 
 -- Favourites policies
 DROP POLICY IF EXISTS "Users can view their own favourites" ON public.favourites;
@@ -131,8 +171,14 @@ ON public.favourites FOR DELETE
 TO authenticated 
 USING (auth.uid() = user_id);
 
--- Enable RLS on threads table
-ALTER TABLE public.threads ENABLE ROW LEVEL SECURITY;
+-- Enable RLS on threads table (only if table exists)
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'threads' AND table_schema = 'public') THEN
+        ALTER TABLE public.threads ENABLE ROW LEVEL SECURITY;
+        RAISE NOTICE 'Enabled RLS on threads table';
+    END IF;
+END $$;
 
 -- Threads policies (messages functionality)
 DROP POLICY IF EXISTS "Users can view threads they participate in" ON public.threads;
@@ -151,8 +197,14 @@ ON public.threads FOR INSERT
 TO authenticated 
 WITH CHECK (auth.uid() = buyer_id);
 
--- Enable RLS on messages table
-ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
+-- Enable RLS on messages table (only if table exists)
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'messages' AND table_schema = 'public') THEN
+        ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
+        RAISE NOTICE 'Enabled RLS on messages table';
+    END IF;
+END $$;
 
 -- Messages policies
 DROP POLICY IF EXISTS "Users can view messages in their threads" ON public.messages;
