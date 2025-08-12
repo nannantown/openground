@@ -60,7 +60,9 @@ CREATE POLICY "Public profiles are viewable by everyone"
     TO authenticated, anon
     USING (true);
 
-RAISE NOTICE '✅ Fixed users table RLS policies';
+DO $$ BEGIN
+    RAISE NOTICE '✅ Fixed users table RLS policies';
+END $$;
 
 -- ==============================================
 -- 3. Fix listings table RLS
