@@ -31,7 +31,8 @@
     "check:accessibility": "tsx scripts/accessibility-check.ts",
     "fix:buttons": "tsx scripts/standardize-buttons.ts",
     "check:buttons": "tsx scripts/comprehensive-button-check.ts",
-    "fix:buttons:auto": "tsx scripts/auto-fix-buttons.ts"
+    "fix:buttons:auto": "tsx scripts/auto-fix-buttons.ts",
+    "check:database-security": "tsx scripts/database-security-check.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
