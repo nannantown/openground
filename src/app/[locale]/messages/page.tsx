@@ -1,19 +1,22 @@
 'use client'
 
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '@/hooks/useAuth'
 import { Header } from '@/components/Header'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Lock, Key, MessageCircle, Home, Loader2, Mail, User, ChevronRight } from 'lucide-react'
+import { Lock, Key, MessageCircle, Home, Loader2, Mail, User, ChevronRight, Search, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 
 interface Thread {
   id: string
   listing_id: string
   last_message: string
   updated_at: string
+  unread_count?: number
   listing: {
     id: string
     title: string
@@ -32,6 +35,7 @@ interface Thread {
 
 export default function MessagesPage() {
   const { user, isLoading: authLoading } = useAuth()
+  const [searchQuery, setSearchQuery] = useState('')
 
   const { data: threads = [], isLoading } = useQuery({
     queryKey: ['threads'],
@@ -72,6 +76,22 @@ export default function MessagesPage() {
       })
     }
   }
+
+  // Filter threads based on search query
+  const filteredThreads = threads.filter(thread => {
+    if (!searchQuery.trim()) return true
+    
+    const query = searchQuery.toLowerCase()
+    const otherParticipant = thread.participants.find(
+      p => p.user.id !== user?.id
+    )?.user
+    
+    return (
+      thread.listing?.title?.toLowerCase().includes(query) ||
+      thread.last_message?.toLowerCase().includes(query) ||
+      otherParticipant?.display_name?.toLowerCase().includes(query)
+    )
+  })
 
   if (authLoading) {
     return (
@@ -122,6 +142,29 @@ export default function MessagesPage() {
               メッセージ
             </h1>
             <p className="text-gray-600">出品者とのやり取りを確認できます</p>
+            
+            {/* Search Bar */}
+            <div className="mt-4 relative">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  type="text"
+                  placeholder="メッセージ、ユーザー名、商品名で検索..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 pr-10"
+                  data-testid="search-input"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+            </div>
           </header>
 
           {isLoading && (
@@ -147,42 +190,57 @@ export default function MessagesPage() {
             </div>
           )}
 
-          {!isLoading && threads.length > 0 && (
-            <div className="bg-white rounded-lg shadow-sm divide-y">
-              {threads.map((thread) => {
+          {!isLoading && filteredThreads.length > 0 && (
+            <div className="bg-white rounded-lg shadow-sm divide-y" data-testid="thread-list">
+              {filteredThreads.map((thread) => {
                 const otherParticipant = thread.participants.find(
                   p => p.user.id !== user.id
                 )?.user
-                const firstImage = thread.listing.images?.[0]
+                const firstImage = thread.listing?.images?.[0]
 
                 return (
                   <Link
                     key={thread.id}
                     href={`/messages/${thread.id}`}
                     className="block hover:bg-gray-50 transition-colors"
+                    data-testid={`thread-${thread.id}`}
                   >
                     <div className="p-6">
                       <div className="flex items-start gap-4">
                         {/* Avatar */}
-                        {otherParticipant?.avatar_url ? (
-                          <div className="relative h-12 w-12 rounded-full overflow-hidden flex-shrink-0">
-                            <Image
-                              src={otherParticipant.avatar_url}
-                              alt={otherParticipant.display_name}
-                              fill
-                              className="object-cover"
-                            />
-                          </div>
-                        ) : (
-                          <div className="h-12 w-12 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
-                            <User className="w-6 h-6 text-muted-foreground" />
-                          </div>
-                        )}
+                        <div className="relative">
+                          {otherParticipant?.avatar_url ? (
+                            <div className="relative h-12 w-12 rounded-full overflow-hidden flex-shrink-0">
+                              <Image
+                                src={otherParticipant.avatar_url}
+                                alt={otherParticipant.display_name}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                          ) : (
+                            <div className="h-12 w-12 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
+                              <User className="w-6 h-6 text-muted-foreground" />
+                            </div>
+                          )}
+                          
+                          {/* Unread Badge */}
+                          {thread.unread_count && thread.unread_count > 0 && (
+                            <div 
+                              className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full min-w-[20px] h-5 flex items-center justify-center px-1"
+                              data-testid="unread-badge"
+                            >
+                              {thread.unread_count > 99 ? '99+' : thread.unread_count}
+                            </div>
+                          )}
+                        </div>
 
                         <div className="flex-1 min-w-0">
                           {/* Header */}
                           <div className="flex items-center gap-2 mb-1">
-                            <h3 className="font-semibold text-gray-900 truncate">
+                            <h3 className={`font-semibold text-gray-900 truncate ${
+                              thread.unread_count && thread.unread_count > 0 ? 'font-bold' : ''
+                            }`}>
                               {otherParticipant?.display_name || 'Unknown User'}
                             </h3>
                             <span className="text-sm text-gray-500">
@@ -196,7 +254,7 @@ export default function MessagesPage() {
                               <div className="relative h-10 w-10 rounded overflow-hidden flex-shrink-0">
                                 <Image
                                   src={firstImage}
-                                  alt={thread.listing.title}
+                                  alt={thread.listing?.title || 'Listing image'}
                                   fill
                                   className="object-cover"
                                 />
@@ -204,10 +262,10 @@ export default function MessagesPage() {
                             )}
                             <div className="flex-1 min-w-0">
                               <div className="text-sm font-medium text-gray-800 truncate">
-                                {thread.listing.title}
+                                {thread.listing?.title || 'Unknown Listing'}
                               </div>
                               <div className="text-sm text-gray-600">
-                                {formatPrice(thread.listing.price)}
+                                {formatPrice(thread.listing?.price)}
                               </div>
                             </div>
                           </div>
@@ -226,6 +284,23 @@ export default function MessagesPage() {
                   </Link>
                 )
               })}
+            </div>
+          )}
+
+          {/* Search Results Message */}
+          {!isLoading && searchQuery && filteredThreads.length === 0 && threads.length > 0 && (
+            <div className="text-center py-16" data-testid="search-results">
+              <Search className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+              <h2 className="text-xl font-semibold mb-2">検索結果が見つかりません</h2>
+              <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                「{searchQuery}」に一致するメッセージが見つかりませんでした
+              </p>
+              <Button 
+                variant="outline" 
+                onClick={() => setSearchQuery('')}
+              >
+                検索をクリア
+              </Button>
             </div>
           )}
         </div>

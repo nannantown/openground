@@ -3,6 +3,7 @@ export type UUID = string
 // Database enum types for type safety
 export type ListingStatus = 'active' | 'sold' | 'expired'
 export type ThreadStatus = 'open' | 'closed'
+export type TransactionType = 'buyer_to_seller' | 'seller_to_buyer'
 
 export type User = {
   id: UUID
@@ -35,6 +36,7 @@ export type Thread = {
   id: UUID
   last_message: string | null
   updated_at: string
+  unread_count?: number
 }
 
 export type Message = {
@@ -45,5 +47,29 @@ export type Message = {
   image_urls: string[]
   created_at: string
   read_by: UUID[]
+}
+
+export type Review = {
+  id: UUID
+  reviewer_id: UUID
+  reviewee_id: UUID
+  listing_id: UUID
+  rating: number
+  comment: string | null
+  transaction_type: TransactionType
+  created_at: string
+  updated_at: string
+}
+
+export type UserReviewStats = {
+  user_id: UUID
+  average_rating: number
+  total_reviews: number
+  rating_5_count: number
+  rating_4_count: number
+  rating_3_count: number
+  rating_2_count: number
+  rating_1_count: number
+  updated_at: string
 }
 

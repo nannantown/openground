@@ -1,46 +1,58 @@
 import { createClient } from '@/lib/supabase/server'
+import { getAuthUser } from '@/lib/auth-helpers'
 import { NextRequest, NextResponse } from 'next/server'
 
 export const runtime = 'edge'
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient()
-    
-    // Get current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    // ゲストユーザー対応の認証チェック
+    const { user, error: authError } = await getAuthUser(request)
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // First, get thread IDs where user is a participant
-    const { data: participantThreads, error: participantError } = await supabase
-      .from('participants')
-      .select('thread_id')
-      .eq('user_id', user.id)
+    // ゲストユーザーも通常のSupabaseユーザーとして処理するため、ここでの特別な処理は不要
+    // if (user.isGuest) {
+    //   return NextResponse.json([], {
+    //     headers: {
+    //       'Cache-Control': 'private, s-maxage=30, stale-while-revalidate=60',
+    //     }
+    //   })
+    // }
+
+    const supabase = await createClient()
+
+    let threadIds = []
     
-    if (participantError) {
-      return NextResponse.json({ error: 'Failed to fetch participant threads' }, { status: 500 })
-    }
-    
-    const threadIds = participantThreads?.map(p => p.thread_id) || []
-    
-    if (threadIds.length === 0) {
-      return NextResponse.json({ threads: [] })
+    // ゲストユーザーの場合は空の配列を返すか、特別処理をする
+    if (user.isGuest) {
+      // ゲストユーザー用のモックスレッドデータを返すか、空を返す
+      return NextResponse.json([])
+    } else {
+      // First, get thread IDs where user is a participant
+      const { data: participantThreads, error: participantError } = await supabase
+        .from('participants')
+        .select('thread_id')
+        .eq('user_id', user.id)
+      
+      if (participantError) {
+        return NextResponse.json({ error: 'Failed to fetch participant threads' }, { status: 500 })
+      }
+      
+      threadIds = participantThreads?.map(p => p.thread_id) || []
+      
+      if (threadIds.length === 0) {
+        return NextResponse.json([])
+      }
     }
 
     // Get threads where user is a participant
+    // Note: Can't use listing foreign key since listing_id column doesn't exist
     const { data: threads, error } = await supabase
       .from('threads')
       .select(`
         *,
-        listing:listings!listing_id (
-          id,
-          title,
-          price,
-          images,
-          owner_id
-        ),
         participants:participants!thread_id (
           user:users!user_id (
             id,
@@ -57,7 +69,30 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to fetch threads' }, { status: 500 })
     }
 
-    return NextResponse.json(threads || [], {
+    // Calculate unread count for each thread
+    const threadsWithUnreadCount = await Promise.all(
+      (threads || []).map(async (thread) => {
+        // Get all messages in this thread and filter unread ones in JavaScript
+        const { data: threadMessages, error: countError } = await supabase
+          .from('messages')
+          .select('read_by')
+          .eq('thread_id', thread.id)
+        
+        const unreadCount = (threadMessages || []).filter(message => {
+          const readBy = Array.isArray(message.read_by) ? message.read_by : []
+          return !readBy.includes(user.id)
+        }).length
+
+        if (countError) {
+          console.error('Unread count error:', countError)
+          return { ...thread, unread_count: 0 }
+        }
+
+        return { ...thread, unread_count: unreadCount || 0 }
+      })
+    )
+
+    return NextResponse.json(threadsWithUnreadCount, {
       headers: {
         'Cache-Control': 'private, s-maxage=30, stale-while-revalidate=60',
       }
@@ -70,13 +105,13 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient()
-    
-    // Get current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    // ゲストユーザー対応の認証チェック
+    const { user, error: authError } = await getAuthUser(request)
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
+    const supabase = await createClient()
 
     const body = await request.json()
     const { listing_id, message } = body
@@ -88,7 +123,7 @@ export async function POST(request: NextRequest) {
     // Get the listing to find the owner
     const { data: listing, error: listingError } = await supabase
       .from('listings')
-      .select('owner_id')
+      .select('owner_id, title, price, images')
       .eq('id', listing_id)
       .single()
 
@@ -101,68 +136,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Cannot create thread with yourself' }, { status: 400 })
     }
 
-    // Check if thread already exists between these users for this listing
-    const { data: sharedThreads, error: sharedError } = await supabase
-      .from('participants')
-      .select('thread_id')
-      .in('user_id', [user.id, listing.owner_id])
-    
-    if (sharedError) {
-      console.error('Shared threads error:', sharedError)
-      return NextResponse.json({ error: 'Failed to check existing threads' }, { status: 500 })
-    }
+    // Simplified approach: Always try to create a new thread
+    // Since listing_id column doesn't exist, we'll work with the basic schema
 
-    const sharedThreadIds = sharedThreads?.map(p => p.thread_id) || []
-    
-    const { data: existingThread, error: threadCheckError } = await supabase
-      .from('threads')
-      .select('id')
-      .eq('listing_id', listing_id)
-      .in('id', sharedThreadIds)
-      .limit(1)
-      .single()
-
-    if (threadCheckError && threadCheckError.code !== 'PGRST116') {
-      console.error('Thread check error:', threadCheckError)
-    }
-
-    // If thread exists, return it
-    if (existingThread) {
-      const { data: thread, error: fetchError } = await supabase
-        .from('threads')
-        .select(`
-          *,
-          listing:listings!listing_id (
-            id,
-            title,
-            price,
-            images,
-            owner_id
-          ),
-          participants:participants!thread_id (
-            user:users!user_id (
-              id,
-              display_name,
-              avatar_url
-            )
-          )
-        `)
-        .eq('id', existingThread.id)
-        .single()
-
-      if (fetchError) {
-        console.error('Fetch thread error:', fetchError)
-        return NextResponse.json({ error: 'Failed to fetch thread' }, { status: 500 })
-      }
-
-      return NextResponse.json(thread)
-    }
-
-    // Create new thread
+    // Create new thread (without listing_id since it doesn't exist in current schema)
     const { data: newThread, error: createError } = await supabase
       .from('threads')
       .insert({
-        listing_id,
         last_message: message || ''
       })
       .select()
@@ -173,27 +153,37 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to create thread' }, { status: 500 })
     }
 
-    // Add participants
-    const { error: participantsError } = await supabase
-      .from('participants')
-      .insert([
-        { thread_id: newThread.id, user_id: user.id },
-        { thread_id: newThread.id, user_id: listing.owner_id }
-      ])
+    // Add participants now that RLS is fixed
+    // ゲストユーザーの場合は特別処理
+    if (!user.isGuest) {
+      const { error: userParticipantError } = await supabase
+        .from('participants')
+        .insert({ thread_id: newThread.id, user_id: user.id })
 
-    if (participantsError) {
-      console.error('Add participants error:', participantsError)
-      return NextResponse.json({ error: 'Failed to add participants' }, { status: 500 })
+      if (userParticipantError) {
+        console.error('Add user participant error:', userParticipantError)
+        return NextResponse.json({ error: 'Failed to add user as participant' }, { status: 500 })
+      }
     }
 
-    // If initial message provided, create it
-    if (message) {
+    // Add owner as participant
+    const { error: ownerParticipantError } = await supabase
+      .from('participants')
+      .insert({ thread_id: newThread.id, user_id: listing.owner_id })
+
+    if (ownerParticipantError) {
+      console.error('Add owner participant error:', ownerParticipantError)
+      return NextResponse.json({ error: 'Failed to add owner as participant' }, { status: 500 })
+    }
+
+    // If initial message provided, create it with listing context
+    if (message && !user.isGuest) {
       const { error: messageError } = await supabase
         .from('messages')
         .insert({
           thread_id: newThread.id,
           sender_id: user.id,
-          body: message
+          body: `[Listing: ${listing_id}] ${message}`
         })
 
       if (messageError) {
@@ -202,35 +192,27 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Fetch the complete thread data
-    const { data: completeThread, error: fetchCompleteError } = await supabase
-      .from('threads')
-      .select(`
-        *,
-        listing:listings!listing_id (
-          id,
-          title,
-          price,
-          images,
-          owner_id
-        ),
-        participants:participants!thread_id (
-          user:users!user_id (
-            id,
-            display_name,
-            avatar_url
-          )
-        )
-      `)
-      .eq('id', newThread.id)
-      .single()
-
-    if (fetchCompleteError) {
-      console.error('Fetch complete thread error:', fetchCompleteError)
-      return NextResponse.json({ error: 'Thread created but failed to fetch details' }, { status: 500 })
+    // Since we can't use foreign key relations without listing_id column,
+    // we'll return the basic thread data and let the frontend handle the rest
+    const result = {
+      id: newThread.id,
+      last_message: newThread.last_message,
+      updated_at: newThread.updated_at,
+      listing_id: listing_id, // Include this in the response even though not in DB
+      listing: {
+        id: listing_id,
+        title: listing.title || 'Unknown Listing',
+        price: listing.price,
+        images: listing.images || [],
+        owner_id: listing.owner_id
+      },
+      participants: [
+        { user: { id: user.id, display_name: 'You', avatar_url: null } },
+        { user: { id: listing.owner_id, display_name: 'Owner', avatar_url: null } }
+      ]
     }
 
-    return NextResponse.json(completeThread, { status: 201 })
+    return NextResponse.json(result, { status: 201 })
   } catch (error) {
     console.error('API error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

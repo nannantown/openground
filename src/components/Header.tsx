@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 
 export function Header() {
-  const { user, signOut } = useAuth()
+  const { user, signOut, isGuestMode } = useAuth()
   const t = useTranslations('nav')
 
   return (
@@ -32,11 +32,16 @@ export function Header() {
             <LanguageSwitcher />
             {user ? (
               <div className="flex items-center space-x-3">
+                {isGuestMode && (
+                  <span className="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full font-medium">
+                    ゲストモード
+                  </span>
+                )}
                 <Link href="/me/listings" className="btn btn-ghost">
                   {t('myListings')}
                 </Link>
                 <button onClick={signOut} className="btn btn-secondary">
-                  {t('signOut')}
+                  {isGuestMode ? '終了' : t('signOut')}
                 </button>
               </div>
             ) : (

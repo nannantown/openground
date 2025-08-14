@@ -17,12 +17,12 @@ export async function GET(request: NextRequest) {
       .from('reviews')
       .select(`
         *,
-        from_user:users!from_uid (
+        reviewer:users!reviewer_id (
           id,
           display_name,
           avatar_url
         ),
-        to_user:users!to_uid (
+        reviewee:users!reviewee_id (
           id,
           display_name,
           avatar_url
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
       `)
 
     if (userId) {
-      query = query.eq('to_uid', userId)
+      query = query.eq('reviewee_id', userId)
     }
 
     if (listingId) {
@@ -72,83 +72,91 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { to_uid, listing_id, rating, comment } = body
+    const { reviewee_id, listing_id, rating, comment, transaction_type } = body
 
     // Validate required fields
-    if (!to_uid || !rating) {
-      return NextResponse.json({ error: 'to_uid and rating are required' }, { status: 400 })
+    if (!reviewee_id || !listing_id || !rating || !transaction_type) {
+      return NextResponse.json({ 
+        error: 'reviewee_id, listing_id, rating, and transaction_type are required' 
+      }, { status: 400 })
     }
 
     if (rating < 1 || rating > 5) {
       return NextResponse.json({ error: 'Rating must be between 1 and 5' }, { status: 400 })
     }
 
+    if (!['buyer_to_seller', 'seller_to_buyer'].includes(transaction_type)) {
+      return NextResponse.json({ 
+        error: 'transaction_type must be buyer_to_seller or seller_to_buyer' 
+      }, { status: 400 })
+    }
+
     // Can't review yourself
-    if (to_uid === user.id) {
+    if (reviewee_id === user.id) {
       return NextResponse.json({ error: 'Cannot review yourself' }, { status: 400 })
     }
 
-    // Check if user already reviewed this person for this listing
-    if (listing_id) {
-      const { data: existingReview, error: checkError } = await supabase
-        .from('reviews')
-        .select('id')
-        .eq('from_uid', user.id)
-        .eq('to_uid', to_uid)
-        .eq('listing_id', listing_id)
-        .single()
+    // Check if user can review (using database function)
+    const { data: canReview, error: permError } = await supabase
+      .rpc('can_user_review', {
+        p_reviewer_id: user.id,
+        p_reviewee_id: reviewee_id,
+        p_listing_id: listing_id,
+        p_transaction_type: transaction_type
+      })
 
-      if (checkError && checkError.code !== 'PGRST116') {
-        console.error('Review check error:', checkError)
-      }
-
-      if (existingReview) {
-        return NextResponse.json({ error: 'You have already reviewed this user for this listing' }, { status: 400 })
-      }
+    if (permError) {
+      console.error('Permission check error:', permError)
+      return NextResponse.json({ 
+        error: 'Unable to verify review permissions' 
+      }, { status: 500 })
     }
 
-    // Verify the target user exists
-    const { data: targetUser, error: userError } = await supabase
-      .from('users')
+    if (!canReview) {
+      return NextResponse.json({ 
+        error: 'You can only review users you have completed transactions with' 
+      }, { status: 403 })
+    }
+
+    // Check for duplicate review
+    const { data: existingReview, error: checkError } = await supabase
+      .from('reviews')
       .select('id')
-      .eq('id', to_uid)
+      .eq('reviewer_id', user.id)
+      .eq('reviewee_id', reviewee_id)
+      .eq('listing_id', listing_id)
+      .eq('transaction_type', transaction_type)
       .single()
 
-    if (userError || !targetUser) {
-      return NextResponse.json({ error: 'Target user not found' }, { status: 404 })
+    if (checkError && checkError.code !== 'PGRST116') {
+      console.error('Review check error:', checkError)
     }
 
-    // If listing_id provided, verify it exists
-    if (listing_id) {
-      const { data: listing, error: listingError } = await supabase
-        .from('listings')
-        .select('id')
-        .eq('id', listing_id)
-        .single()
-
-      if (listingError || !listing) {
-        return NextResponse.json({ error: 'Listing not found' }, { status: 404 })
-      }
+    if (existingReview) {
+      return NextResponse.json({ 
+        error: 'You have already reviewed this user for this transaction' 
+      }, { status: 400 })
     }
 
     // Create review
     const { data: review, error } = await supabase
       .from('reviews')
       .insert({
-        from_uid: user.id,
-        to_uid,
+        reviewer_id: user.id,
+        reviewee_id,
         listing_id,
         rating,
-        comment
+        comment: comment?.trim() || null,
+        transaction_type
       })
       .select(`
         *,
-        from_user:users!from_uid (
+        reviewer:users!reviewer_id (
           id,
           display_name,
           avatar_url
         ),
-        to_user:users!to_uid (
+        reviewee:users!reviewee_id (
           id,
           display_name,
           avatar_url

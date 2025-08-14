@@ -1,8 +1,9 @@
 'use client'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useState, createContext, useContext } from 'react'
+import { useState, createContext, useContext, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { createGuestAwareFetch } from '@/lib/api-client'
 import type { SupabaseClient } from '@supabase/supabase-js'
 
 const SupabaseContext = createContext<SupabaseClient | undefined>(undefined)
@@ -25,6 +26,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
       },
     },
   }))
+
+  // ゲストモードのfetchインターセプトを初期化
+  useEffect(() => {
+    createGuestAwareFetch()
+  }, [])
 
   return (
     <SupabaseContext.Provider value={supabaseClient}>

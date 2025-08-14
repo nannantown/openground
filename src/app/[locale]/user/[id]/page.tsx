@@ -8,6 +8,7 @@ import Image from 'next/image'
 import { X, Home, User, Package, Star, Camera, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { ReviewDisplay } from '@/components/ReviewDisplay'
 import type { Listing } from '@/shared/types'
 
 interface UserProfile {
@@ -53,17 +54,6 @@ export default function UserProfilePage() {
     enabled: !!userId,
   })
 
-  const { data: reviews = [] } = useQuery({
-    queryKey: ['user-reviews', userId],
-    queryFn: async () => {
-      const response = await fetch(`/api/v1/reviews?user_id=${userId}`)
-      if (!response.ok) {
-        throw new Error('Failed to fetch reviews')
-      }
-      return response.json()
-    },
-    enabled: !!userId,
-  })
 
   const formatPrice = (price?: number | null) => {
     if (price == null) return '価格相談'
@@ -80,11 +70,6 @@ export default function UserProfilePage() {
     })
   }
 
-  const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }, (_, i) => (
-      <Star key={i} className={`w-4 h-4 ${i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} />
-    ))
-  }
 
   if (userLoading) {
     return (
@@ -259,50 +244,7 @@ export default function UserProfilePage() {
 
             {/* Reviews */}
             <div>
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-xl font-bold mb-6">レビュー</h2>
-                
-                {reviews.length === 0 ? (
-                  <div className="text-center py-8">
-                    <Star className="w-12 h-12 mx-auto mb-2 text-muted-foreground" />
-                    <p className="text-gray-600">まだレビューがありません</p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {reviews.slice(0, 5).map((review: any) => (
-                      <div key={review.id} className="border-b pb-4 last:border-b-0">
-                        <div className="flex items-center gap-3 mb-2">
-                          {review.from_user?.avatar_url ? (
-                            <div className="relative h-8 w-8 rounded-full overflow-hidden">
-                              <Image
-                                src={review.from_user.avatar_url}
-                                alt={review.from_user.display_name}
-                                fill
-                                className="object-cover"
-                              />
-                            </div>
-                          ) : (
-                            <div className="h-8 w-8 bg-muted rounded-full flex items-center justify-center">
-                              <User className="w-4 h-4 text-muted-foreground" />
-                            </div>
-                          )}
-                          <div>
-                            <div className="font-semibold text-sm">
-                              {review.from_user?.display_name || 'Anonymous'}
-                            </div>
-                            <div className="text-xs">
-                              {renderStars(review.rating)}
-                            </div>
-                          </div>
-                        </div>
-                        {review.comment && (
-                          <p className="text-sm text-gray-700">{review.comment}</p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <ReviewDisplay userId={userId} />
             </div>
           </div>
         </div>

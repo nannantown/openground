@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { getAuthUser } from '@/lib/auth-helpers'
 import { NextRequest, NextResponse } from 'next/server'
 
 export const runtime = 'edge'
@@ -8,25 +9,29 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createClient()
     const { id: threadId } = await params
     
-    // Get current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    // ゲストユーザー対応の認証チェック
+    const { user, error: authError } = await getAuthUser(request)
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Check if user is a participant in this thread
-    const { data: participant, error: participantError } = await supabase
-      .from('participants')
-      .select('*')
-      .eq('thread_id', threadId)
-      .eq('user_id', user.id)
-      .single()
+    const supabase = await createClient()
 
-    if (participantError || !participant) {
-      return NextResponse.json({ error: 'Access denied' }, { status: 403 })
+    // ゲストユーザーの場合は参加者チェックをスキップ
+    if (!user.isGuest) {
+      // Check if user is a participant in this thread
+      const { data: participant, error: participantError } = await supabase
+        .from('participants')
+        .select('*')
+        .eq('thread_id', threadId)
+        .eq('user_id', user.id)
+        .single()
+
+      if (participantError || !participant) {
+        return NextResponse.json({ error: 'Access denied' }, { status: 403 })
+      }
     }
 
     const { searchParams } = new URL(request.url)
@@ -53,8 +58,8 @@ export async function GET(
       return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 })
     }
 
-    // Mark messages as read by current user
-    if (messages && messages.length > 0) {
+    // Mark messages as read by current user (ゲストユーザーはスキップ)
+    if (messages && messages.length > 0 && !user.isGuest) {
       const messageIds = messages.map(m => m.id)
       await supabase
         .from('messages')
@@ -84,25 +89,29 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createClient()
     const { id: threadId } = await params
     
-    // Get current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    // ゲストユーザー対応の認証チェック
+    const { user, error: authError } = await getAuthUser(request)
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Check if user is a participant in this thread
-    const { data: participant, error: participantError } = await supabase
-      .from('participants')
-      .select('*')
-      .eq('thread_id', threadId)
-      .eq('user_id', user.id)
-      .single()
+    const supabase = await createClient()
 
-    if (participantError || !participant) {
-      return NextResponse.json({ error: 'Access denied' }, { status: 403 })
+    // ゲストユーザーの場合は参加者チェックをスキップ
+    if (!user.isGuest) {
+      // Check if user is a participant in this thread
+      const { data: participant, error: participantError } = await supabase
+        .from('participants')
+        .select('*')
+        .eq('thread_id', threadId)
+        .eq('user_id', user.id)
+        .single()
+
+      if (participantError || !participant) {
+        return NextResponse.json({ error: 'Access denied' }, { status: 403 })
+      }
     }
 
     const body = await request.json()
@@ -112,7 +121,12 @@ export async function POST(
       return NextResponse.json({ error: 'Message or images required' }, { status: 400 })
     }
 
-    // Create new message
+    // Create new message (ゲストユーザーの場合は特別処理)
+    if (user.isGuest) {
+      // ゲストユーザーはメッセージを作成できない（デモ用）
+      return NextResponse.json({ error: 'Guest users cannot send messages in demo mode' }, { status: 403 })
+    }
+
     const { data: newMessage, error } = await supabase
       .from('messages')
       .insert({

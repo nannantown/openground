@@ -69,9 +69,9 @@ export function useRealTimeMessages(threadId: string, userId?: string) {
 
           // Show browser notification for messages from others
           if (message.sender_id !== userId && 'Notification' in window && Notification.permission === 'granted') {
-            new Notification(`${message.sender.display_name}からメッセージ`, {
+            new Notification(`${message.sender?.display_name || '匿名ユーザー'}からメッセージ`, {
               body: message.body,
-              icon: message.sender.avatar_url || '/default-avatar.png',
+              icon: message.sender?.avatar_url || '/default-avatar.png',
               tag: `message-${message.id}`,
             })
           }

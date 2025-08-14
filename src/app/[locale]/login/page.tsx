@@ -3,8 +3,9 @@
 import { useState } from 'react'
 import { useSupabase } from '@/app/[locale]/providers'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/hooks/useAuth'
 import Link from 'next/link'
-import { Mail, Key, Loader2, ArrowLeft, Github } from 'lucide-react'
+import { Mail, Key, Loader2, ArrowLeft, Github, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -19,6 +20,7 @@ export default function LoginPage() {
   
   const supabase = useSupabase()
   const router = useRouter()
+  const { signInAsGuest } = useAuth()
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -89,6 +91,20 @@ export default function LoginPage() {
     }
   }
 
+  const handleGuestSignIn = async () => {
+    setLoading(true)
+    setError('')
+    
+    try {
+      await signInAsGuest()
+      router.push('/')
+    } catch (err: any) {
+      setError('ゲストログインでエラーが発生しました')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-background flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -139,6 +155,19 @@ export default function LoginPage() {
                 <Github className="w-5 h-5 mr-3" />
                 GitHubでサインイン
               </Button>
+
+              {process.env.NODE_ENV === 'development' && (
+                <Button
+                  data-testid="guest-login-button"
+                  onClick={handleGuestSignIn}
+                  disabled={loading}
+                  variant="outline"
+                  className="w-full border-orange-300 text-orange-700 bg-orange-50 hover:bg-orange-100 hover:border-orange-400"
+                >
+                  <User className="w-5 h-5 mr-3" />
+                  開発用ゲストとしてサインイン
+                </Button>
+              )}
             </div>
 
             <div className="mt-6">

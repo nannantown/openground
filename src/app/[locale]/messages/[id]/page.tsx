@@ -9,9 +9,10 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRealTimeMessages } from '@/hooks/useRealTimeMessages'
 import { useTypingIndicator } from '@/hooks/useTypingIndicator'
-import { X, MessageCircle, User, ArrowLeft, Send } from 'lucide-react'
+import { X, MessageCircle, User, ArrowLeft, Send, MoreVertical, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { MessageImageUpload } from '@/components/MessageImageUpload'
 
 interface Message {
   id: string
@@ -33,6 +34,7 @@ interface Thread {
   listing_id: string
   last_message: string
   updated_at: string
+  unread_count?: number
   listing: {
     id: string
     title: string
@@ -56,6 +58,7 @@ export default function ChatPage() {
   const queryClient = useQueryClient()
   const threadId = params?.id as string
   const [message, setMessage] = useState('')
+  const [selectedImages, setSelectedImages] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
@@ -91,15 +94,35 @@ export default function ChatPage() {
   // Set up typing indicators
   const { isTyping, othersTyping, startTyping, stopTyping } = useTypingIndicator(threadId)
 
+  // Mark messages as read when viewing the thread
+  const markAsRead = useMutation({
+    mutationFn: async () => {
+      const response = await fetch(`/api/v1/threads/${threadId}/read`, {
+        method: 'POST',
+      })
+      if (!response.ok) {
+        throw new Error('Failed to mark as read')
+      }
+      return response.json()
+    },
+    onSuccess: () => {
+      // Refresh threads list to update unread count
+      queryClient.invalidateQueries({ queryKey: ['threads'] })
+    },
+  })
+
   // Send message mutation
   const sendMessageMutation = useMutation({
-    mutationFn: async (messageText: string) => {
+    mutationFn: async ({ messageText, imageUrls }: { messageText: string, imageUrls: string[] }) => {
       const response = await fetch(`/api/v1/threads/${threadId}/messages`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: messageText }),
+        body: JSON.stringify({ 
+          message: messageText,
+          image_urls: imageUrls 
+        }),
       })
       
       if (!response.ok) {
@@ -110,6 +133,7 @@ export default function ChatPage() {
     },
     onSuccess: () => {
       setMessage('')
+      setSelectedImages([])
       refetchMessages()
       // Also refresh threads list to update last message
       queryClient.invalidateQueries({ queryKey: ['threads'] })
@@ -122,11 +146,45 @@ export default function ChatPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!message.trim() || sendMessageMutation.isPending) return
+    if ((!message.trim() && selectedImages.length === 0) || sendMessageMutation.isPending) return
     
     setIsLoading(true)
-    sendMessageMutation.mutate(message.trim())
+    sendMessageMutation.mutate({ 
+      messageText: message.trim(), 
+      imageUrls: selectedImages 
+    })
     setIsLoading(false)
+  }
+
+  const handleImagesSelect = (imageUrls: string[]) => {
+    setSelectedImages(imageUrls)
+  }
+
+  // Delete message mutation
+  const deleteMessageMutation = useMutation({
+    mutationFn: async (messageId: string) => {
+      const response = await fetch(`/api/v1/messages/${messageId}`, {
+        method: 'DELETE',
+      })
+      if (!response.ok) {
+        throw new Error('Failed to delete message')
+      }
+      return response.json()
+    },
+    onSuccess: () => {
+      refetchMessages()
+      queryClient.invalidateQueries({ queryKey: ['threads'] })
+    },
+    onError: (error) => {
+      console.error('Delete message error:', error)
+      alert('メッセージの削除に失敗しました。')
+    },
+  })
+
+  const handleDeleteMessage = (messageId: string) => {
+    if (confirm('このメッセージを削除しますか？この操作は取り消せません。')) {
+      deleteMessageMutation.mutate(messageId)
+    }
   }
 
   const formatPrice = (price?: number | null) => {
@@ -169,8 +227,21 @@ export default function ChatPage() {
     }
   }, [user])
 
+  // Mark messages as read when thread is loaded
+  useEffect(() => {
+    if (threadId && user && messages.length > 0) {
+      markAsRead.mutate()
+    }
+  }, [threadId, user, messages.length])
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!user) {
+      router.push('/login')
+    }
+  }, [user, router])
+
   if (!user) {
-    router.push('/login')
     return null
   }
 
@@ -200,7 +271,7 @@ export default function ChatPage() {
   const otherParticipant = thread.participants.find(
     p => p.user.id !== user.id
   )?.user
-  const firstImage = thread.listing.images?.[0]
+  const firstImage = thread.listing?.images?.[0]
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -238,7 +309,7 @@ export default function ChatPage() {
                 {otherParticipant?.display_name || 'Unknown User'}
               </h1>
               <div className="text-sm text-gray-600">
-                {thread.listing.title} - {formatPrice(thread.listing.price)}
+                {thread.listing?.title || 'Unknown Listing'} - {formatPrice(thread.listing?.price)}
               </div>
               <div className="flex items-center gap-2 text-xs">
                 <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-gray-400'}`} />
@@ -247,22 +318,24 @@ export default function ChatPage() {
             </div>
 
             {/* Listing thumbnail */}
-            <Link 
-              href={`/listing/${thread.listing.id}`}
-              className="flex items-center gap-2 bg-gray-50 rounded-lg p-2 hover:bg-gray-100"
-            >
-              {firstImage && (
-                <div className="relative h-8 w-8 rounded overflow-hidden">
-                  <Image
-                    src={firstImage}
-                    alt={thread.listing.title}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              )}
-              <span className="text-sm font-medium">商品を見る</span>
-            </Link>
+            {thread.listing?.id && (
+              <Link 
+                href={`/listing/${thread.listing.id}`}
+                className="flex items-center gap-2 bg-gray-50 rounded-lg p-2 hover:bg-gray-100"
+              >
+                {firstImage && (
+                  <div className="relative h-8 w-8 rounded overflow-hidden">
+                    <Image
+                      src={firstImage}
+                      alt={thread.listing?.title || 'Listing'}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                )}
+                <span className="text-sm font-medium">商品を見る</span>
+              </Link>
+            )}
           </div>
         </div>
       </div>
@@ -271,36 +344,62 @@ export default function ChatPage() {
       <div className="flex-1 overflow-y-auto">
         <div className="container py-4 space-y-4">
           {messages.length === 0 ? (
-            <div className="text-center py-8">
+            <div key="empty-state" className="text-center py-8">
               <MessageCircle className="w-12 h-12 mx-auto mb-2 text-muted-foreground" />
               <p className="text-gray-600">メッセージがありません</p>
             </div>
           ) : (
-            messages.map((msg) => {
-              const isOwnMessage = msg.sender_id === user.id
-              return (
+            <div key="messages-list" className="contents">
+              {messages.map((msg) => {
+                const isOwnMessage = msg.sender_id === user.id
+                const isDeleted = !msg.body && (!msg.image_urls || msg.image_urls.length === 0)
+                
+                return (
                 <div
                   key={msg.id}
-                  className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
+                  className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'} group`}
                 >
-                  <div className={`max-w-sm ${isOwnMessage ? 'order-2' : 'order-1'}`}>
+                  <div className={`max-w-sm ${isOwnMessage ? 'order-2' : 'order-1'} relative`}>
                     <div
                       className={`rounded-lg p-3 ${
-                        isOwnMessage
+                        isDeleted
+                          ? 'bg-gray-100 text-gray-500 italic border border-gray-200'
+                          : isOwnMessage
                           ? 'bg-blue-500 text-white'
                           : 'bg-white text-gray-900 shadow-sm'
                       }`}
                     >
-                      <p className="whitespace-pre-wrap">{msg.body}</p>
-                      {msg.image_urls && msg.image_urls.length > 0 && (
+                      {isDeleted ? (
+                        <p className="whitespace-pre-wrap">このメッセージは削除されました</p>
+                      ) : (
+                        <>
+                          <p className="whitespace-pre-wrap">{msg.body}</p>
+                        </>
+                      )}
+                      
+                      {/* Delete button for own messages */}
+                      {isOwnMessage && !isDeleted && (
+                        <button
+                          onClick={() => handleDeleteMessage(msg.id)}
+                          className="absolute -top-2 -left-2 bg-gray-600 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                          title="メッセージを削除"
+                          data-testid="delete-message-button"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      )}
+                      
+                      {!isDeleted && msg.image_urls && msg.image_urls.length > 0 && (
                         <div className="mt-2 space-y-2">
                           {msg.image_urls.map((url, index) => (
-                            <div key={index} className="relative h-32 w-32 rounded overflow-hidden">
+                            <div key={`${msg.id}-image-${index}`} className="relative w-48 h-48 rounded overflow-hidden">
                               <Image
                                 src={url}
                                 alt={`Image ${index + 1}`}
                                 fill
-                                className="object-cover"
+                                className="object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                                onClick={() => window.open(url, '_blank')}
+                                data-testid={`message-image-${index}`}
                               />
                             </div>
                           ))}
@@ -312,20 +411,21 @@ export default function ChatPage() {
                     </div>
                   </div>
                 </div>
-              )
-            })
+                )
+              })}
+            </div>
           )}
           
           {/* Typing Indicator */}
           {othersTyping.length > 0 && (
-            <div className="flex justify-start">
+            <div key="typing-indicator" className="flex justify-start">
               <div className="max-w-sm">
                 <div className="bg-gray-200 text-gray-700 rounded-lg p-3">
                   <div className="flex items-center space-x-1">
                     <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                      <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                      <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                      <div key="dot-1" className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                      <div key="dot-2" className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                      <div key="dot-3" className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                     </div>
                     <span className="text-sm ml-2">入力中...</span>
                   </div>
@@ -334,46 +434,81 @@ export default function ChatPage() {
             </div>
           )}
           
-          <div ref={messagesEndRef} />
+          <div key="scroll-anchor" ref={messagesEndRef} />
         </div>
       </div>
 
       {/* Message Input */}
       <div className="bg-white border-t">
         <div className="container py-4">
-          <form onSubmit={handleSubmit} className="flex gap-3">
-            <Input
-              type="text"
-              value={message}
-              onChange={(e) => {
-                setMessage(e.target.value)
-                if (e.target.value) {
-                  startTyping()
-                } else {
-                  stopTyping()
-                }
-              }}
-              onBlur={stopTyping}
-              placeholder="メッセージを入力..."
-              className="flex-1 rounded-full"
+          <div className="space-y-3">
+            {/* Image Upload */}
+            <MessageImageUpload
+              onImagesSelect={handleImagesSelect}
               disabled={isLoading || sendMessageMutation.isPending}
             />
-            <Button
-              data-testid="send-message-button"
-              type="submit"
-              disabled={!message.trim() || isLoading || sendMessageMutation.isPending}
-              variant="primary"
-            >
-              {sendMessageMutation.isPending ? (
-                '送信中...'
-              ) : (
-                <>
-                  <Send className="w-4 h-4 mr-2" />
-                  送信
-                </>
-              )}
-            </Button>
-          </form>
+
+            {/* Selected Images Preview */}
+            {selectedImages.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {selectedImages.map((url, index) => (
+                  <div key={`selected-image-${index}-${url}`} className="relative">
+                    <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100">
+                      <Image
+                        src={url}
+                        alt={`Selected ${index + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedImages(prev => prev.filter((_, i) => i !== index))}
+                      className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600"
+                      disabled={isLoading || sendMessageMutation.isPending}
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="flex gap-3">
+              <Input
+                type="text"
+                value={message}
+                onChange={(e) => {
+                  setMessage(e.target.value)
+                  if (e.target.value) {
+                    startTyping()
+                  } else {
+                    stopTyping()
+                  }
+                }}
+                onBlur={stopTyping}
+                placeholder="メッセージを入力..."
+                className="flex-1 rounded-full"
+                disabled={isLoading || sendMessageMutation.isPending}
+                data-testid="message-input"
+              />
+              <Button
+                data-testid="send-message-button"
+                type="submit"
+                disabled={(!message.trim() && selectedImages.length === 0) || isLoading || sendMessageMutation.isPending}
+                variant="primary"
+              >
+                {sendMessageMutation.isPending ? (
+                  '送信中...'
+                ) : (
+                  <>
+                    <Send className="w-4 h-4 mr-2" />
+                    送信
+                  </>
+                )}
+              </Button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
